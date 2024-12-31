@@ -1,8 +1,12 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminDashboard;
+use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Entrepreneur\EntrepreneurDashboardController;
+use App\Http\Controllers\Facilatator\FacilatatorDashboardController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Tourist\TouristDashboardController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -25,8 +29,26 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard
 
 //Admin routes
 
-Route::middleware(['auth', 'admin'])->group(function () {
-    Route::get('/admin/dashboard', [AdminDashboard::class, 'index'])->name('admin.dashboard');
+Route::middleware(['auth', 'admin'])->group(callback: function () {
+    Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+});
+
+//Tourist routes
+
+Route::middleware(['auth', 'tourist'])->group(function () {
+    Route::get('/tourist/dashboard', [TouristDashboardController::class, 'index'])->name('tourist.dashboard');
+});
+
+//Facilatator routes
+
+Route::middleware(['auth', 'facilator'])->group(function () {
+    Route::get('/facilator/dashboard', [FacilatatorDashboardController::class, 'index'])->name('facilator.dashboard');
+});
+
+//Entrepreneur routes
+
+Route::middleware(['auth', 'entrepreneur'])->group(function () {
+    Route::get('/entrepreneur/dashboard', [EntrepreneurDashboardController::class, 'index'])->name('entrepreneur.dashboard');
 });
 
 Route::middleware('auth')->group(function () {

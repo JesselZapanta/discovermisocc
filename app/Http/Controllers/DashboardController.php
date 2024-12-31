@@ -15,8 +15,12 @@ class DashboardController extends Controller
 
             if($role === 0) {
                 return redirect()->route('admin.dashboard');
-            } else {
-                return redirect()->route('dashboard');
+            } else if ($role === 1){
+                return redirect()->route('tourist.dashboard');
+            } else if ($role === 2){
+                return redirect()->route('facilator.dashboard');
+            } else if ($role === 3){
+                return redirect()->route('entrepreneur.dashboard');
             }
         }
     }
