@@ -21,7 +21,6 @@
         "vite": "^6.0"
     },
     "dependencies": {
-        "@nextui-org/react": "^2.6.10",
-        "framer-motion": "^11.15.0"
+        "antd": "^5.22.7"
     }
 }
