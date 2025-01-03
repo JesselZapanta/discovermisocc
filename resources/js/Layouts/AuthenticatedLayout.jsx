@@ -1,18 +1,13 @@
 import React, { useState } from "react";
 import {
-    AppstoreOutlined,
-    BankOutlined,
     DashboardOutlined,
     DownOutlined,
-    LineChartOutlined,
     LogoutOutlined,
     MenuFoldOutlined,
     MenuUnfoldOutlined,
-    ProjectOutlined,
-    TeamOutlined,
     UserOutlined,
 } from "@ant-design/icons";
-import { Avatar, Breadcrumb, Button, Dropdown, Layout, Menu, Space, theme } from "antd";
+import { Avatar, Breadcrumb, Button, Dropdown, Layout, Menu, Space } from "antd";
 import { Link } from "@inertiajs/react";
 import { Footer } from "antd/es/layout/layout";
 const { Header, Sider, Content } = Layout;
@@ -28,33 +23,35 @@ export default function AuthenticatedLayout({ auth, page, children }) {
             key: "admin.dashboard",
             icon: <DashboardOutlined />,
         },
+        {
+            label: <Link href={route("admin.user")}>Users</Link>,
+            key: "admin.user",
+            icon: <DashboardOutlined />,
+        },
     ];
     return (
         <Layout>
             <Sider
                 trigger={null}
-                theme="light"
                 collapsible
                 breakpoint="lg"
                 collapsed={collapsed}
                 onCollapse={(collapsedValue) => setCollapsed(collapsedValue)}
-                className="m-h-[100vh] px-4"
+                className="m-h-[100vh] px-4 bg-gray-50"
             >
                 <div className="w-full h-16 flex gap-2 items-center justify-center">
-                    <img
-                        className="w-16"
-                        src="/images/dmo.png"
-                        alt="DMO"
-                    />
+                    <Link href="/">
+                        <img className="w-16" src="/images/dmo.png" alt="DMO" />
+                    </Link>
                 </div>
 
                 {auth.user.role === 0 && (
                     <Menu
-                        theme="light"
                         mode="inline"
                         defaultSelectedKeys={["1"]}
                         selectedKeys={[currentRoute]}
                         items={adminLinks}
+                        className="bg-gray-50"
                     />
                 )}
             </Sider>
@@ -71,11 +68,7 @@ export default function AuthenticatedLayout({ auth, page, children }) {
                                 )
                             }
                             onClick={() => setCollapsed(!collapsed)}
-                            style={{
-                                fontSize: "16px",
-                                width: 64,
-                                height: 64,
-                            }}
+                            className="text-[16px]"
                         />
                         <div className="px-8">
                             <Dropdown
@@ -111,7 +104,11 @@ export default function AuthenticatedLayout({ auth, page, children }) {
                                 <a onClick={(e) => e.preventDefault()}>
                                     <Space>
                                         {auth?.user?.name}
-                                        <DownOutlined />
+                                        <Avatar
+                                            size="large"
+                                            icon={<UserOutlined />}
+                                            src={`/storage/avatars/${auth.user.avatar}`}
+                                        />
                                     </Space>
                                 </a>
                             </Dropdown>

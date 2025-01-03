@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminDashboard;
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Entrepreneur\EntrepreneurDashboardController;
 use App\Http\Controllers\Facilatator\FacilatatorDashboardController;
@@ -31,6 +32,16 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard
 
 Route::middleware(['auth', 'admin'])->group(callback: function () {
     Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+
+    Route::get('/admin/user', [AdminUserController::class, 'index'])->name('admin.user');
+    Route::post('/admin/user/store', [AdminUserController::class, 'store']);
+    Route::get('/admin/user/getdata', [AdminUserController::class, 'getdata']);
+    Route::put('/admin/user/update/{id}', [AdminUserController::class, 'update']);
+    Route::delete('/admin/user/destroy/{id}', [AdminUserController::class, 'destroy']);
+
+    Route::post('/avatar-temp-upload', [AdminUserController::class, 'tempUpload']);
+    Route::post('/avatar-temp-remove/{filename}', [AdminUserController::class, 'removeUpload']);
+    Route::post('/avatar-image-replace/{id}/{filename}', [AdminUserController::class, 'replaceUpload']);
 });
 
 //Tourist routes

@@ -17,8 +17,18 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->tinyInteger('role')->default(1); //0 = admin, 1 = tourist, 2 = facilator, 4 entrepreneur
+            $table->tinyInteger('role')->default(1); //0 = admin, 1 = tourist, 2 = facilator, 3 entrepreneur
             $table->tinyInteger('status')->default(1);//1 = active, 0 = inactive
+            
+            $table->string('birthdate')->nullable();
+
+            $table->tinyInteger('type')->default(0);//0 = Domestic, 1 = International
+
+            $table->string('region')->nullable();
+            $table->string('province')->nullable();
+            $table->string('city')->nullable();
+            $table->string('barangay')->nullable();
+
             $table->string('avatar')->nullable();
             $table->rememberToken();
             $table->timestamps();

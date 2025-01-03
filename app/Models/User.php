@@ -23,6 +23,12 @@ class User extends Authenticatable
         'password',
         'role',
         'status',
+        'birthdate',
+        'type',
+        'region',
+        'province',
+        'city',
+        'barangay',
         'avatar',
     ];
 
