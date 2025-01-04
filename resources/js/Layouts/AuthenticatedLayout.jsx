@@ -17,7 +17,7 @@ export default function AuthenticatedLayout({ auth, page, children }) {
     const currentRoute = route().current();
 
     // Admin
-    const adminLinks = [
+    const admin = [
         {
             label: <Link href={route("dashboard")}>Dashboard</Link>,
             key: "admin.dashboard",
@@ -29,6 +29,19 @@ export default function AuthenticatedLayout({ auth, page, children }) {
             icon: <DashboardOutlined />,
         },
     ];
+    const entrepreneur = [
+        {
+            label: <Link href={route("dashboard")}>Dashboard</Link>,
+            key: "entrepreneur.dashboard",
+            icon: <DashboardOutlined />,
+        },
+        {
+            label: <Link href={route("entrepreneur.business")}>Business</Link>,
+            key: "entrepreneur.business", 
+            icon: <DashboardOutlined />,
+        },
+    ];
+
     return (
         <Layout>
             <Sider
@@ -50,7 +63,16 @@ export default function AuthenticatedLayout({ auth, page, children }) {
                         mode="inline"
                         defaultSelectedKeys={["1"]}
                         selectedKeys={[currentRoute]}
-                        items={adminLinks}
+                        items={admin}
+                        className="bg-gray-50"
+                    />
+                )}
+                {auth.user.role === 3 && (
+                    <Menu
+                        mode="inline"
+                        defaultSelectedKeys={["1"]}
+                        selectedKeys={[currentRoute]}
+                        items={entrepreneur}
                         className="bg-gray-50"
                     />
                 )}

@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminDashboard;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Entrepreneur\EntrepreneurBusinessController;
 use App\Http\Controllers\Entrepreneur\EntrepreneurDashboardController;
 use App\Http\Controllers\Facilatator\FacilatatorDashboardController;
 use App\Http\Controllers\ProfileController;
@@ -60,6 +61,9 @@ Route::middleware(['auth', 'facilator'])->group(function () {
 
 Route::middleware(['auth', 'entrepreneur'])->group(function () {
     Route::get('/entrepreneur/dashboard', [EntrepreneurDashboardController::class, 'index'])->name('entrepreneur.dashboard');
+
+    Route::get('/entrepreneur/business', [EntrepreneurBusinessController::class, 'index'])->name('entrepreneur.business');
+    Route::get('/entrepreneur/business/create', [EntrepreneurBusinessController::class, 'create'])->name('entrepreneur.business-create');
 });
 
 Route::middleware('auth')->group(function () {
