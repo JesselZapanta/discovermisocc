@@ -64,6 +64,7 @@ Route::middleware(['auth', 'entrepreneur'])->group(function () {
 
     Route::get('/entrepreneur/business', [EntrepreneurBusinessController::class, 'index'])->name('entrepreneur.business');
     Route::get('/entrepreneur/business/create', [EntrepreneurBusinessController::class, 'create'])->name('entrepreneur.business-create');
+    Route::post('/entrepreneur/business/store', [EntrepreneurBusinessController::class, 'store']);
 });
 
 Route::middleware('auth')->group(function () {

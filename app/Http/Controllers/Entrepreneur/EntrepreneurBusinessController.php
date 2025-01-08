@@ -16,4 +16,9 @@ class EntrepreneurBusinessController extends Controller
     {
         return inertia('Entrepreneur/Business/Create');
     }
+
+    public function store(Request $request)
+    {
+        return $request;
+    }
 }

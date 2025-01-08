@@ -109,17 +109,6 @@ export default function Index({ auth }) {
         }
     };
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
-
-
-    const showCreateModal = () => {
-        setIsModalOpen(true);
-    };
-
-    //cancel modal and form
-    const handleCancel = () => {
-        setIsModalOpen(false);
-    };
 
     return (
         <AuthenticatedLayout page="Business Management" auth={auth}>
@@ -135,13 +124,6 @@ export default function Index({ auth }) {
                     onChange={(e) => setSearch(e.target.value)}
                     onSearch={() => getData(true)}
                 />
-                <Button
-                    type="primary"
-                    onClick={showCreateModal}
-                    icon={<PlusOutlined />}
-                >
-                    New
-                </Button>
                 <Link href={route("entrepreneur.business-create")}>
                     <Button type="primary" icon={<PlusOutlined />}>
                         New
@@ -245,16 +227,6 @@ export default function Index({ auth }) {
                         )}
                     />
                 </Table>
-                <Modal
-                    title="Create New Business"
-                    open={isModalOpen}
-                    onCancel={handleCancel}
-                    maskClosable={false}
-                    width={1000}
-                    footer={false}
-                >
-                    <Create/>
-                </Modal>
             </div>
         </AuthenticatedLayout>
     );

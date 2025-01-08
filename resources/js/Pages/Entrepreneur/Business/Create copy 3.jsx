@@ -33,13 +33,32 @@ export default function Create({ auth }) {
     const [errors, setErrors] = useState({});
 
     const handleSubmit = async (values) => {
+        console.log("Form Values:", values); // Debugging
+
+        const formData = new FormData();
+
+        for (const key in values) {
+            if (Array.isArray(values[key])) {
+                values[key].forEach((file, index) =>
+                    formData.append(`${key}[${index}]`, file.originFileObj)
+                );
+            } else {
+                formData.append(key, values[key]);
+            }
+        }
+
         setProcessing(true); // Start processing
         setErrors({}); // Clear previous errors
 
         try {
-            const response = await axios.post("/entrepreneur/business/store", values);
+            const response = await axios.post(
+                "/entrepreneur/business/store",
+                formData,
+                {
+                    headers: { "Content-Type": "multipart/form-data" },
+                }
+            );
 
-            // Handle success response
             if (response.data.status === "created") {
                 handleCancel(); // Reset the form
                 notification.success({
@@ -49,7 +68,6 @@ export default function Create({ auth }) {
                 });
             }
         } catch (error) {
-            // Handle validation errors or other server errors
             if (error.response?.data?.errors) {
                 setErrors(error.response.data.errors);
             } else {
@@ -63,59 +81,54 @@ export default function Create({ auth }) {
             setProcessing(false); // Stop processing
         }
     };
+
     const handleCancel = () => {
         form.resetFields();
     };
 
-    const Uploadprops = [];
+    const handleUploadChange = (e) => {
+        return Array.isArray(e) ? e : e?.fileList;
+    };
 
-
-
-    return (
-        <>
-            <AuthenticatedLayout page="Business Management" auth={auth}>
-                <Form
-                    form={form}
-                    layout="vertical"
-                    autoComplete="off"
-                    onFinish={handleSubmit}
-                    className="mt-4 max-w-5xl mx-auto bg-gray-100 p-8 rounded"
-                >
-                    <div className="grid gap-4 lg:grid-cols-3 sm:grid-cols-1">
-                        <Form.Item
-                            label="BUSINESS NAME"
-                            name="name"
-                            validateStatus={errors?.name ? "error" : ""}
-                            help={errors?.name ? errors.name[0] : ""}
-                            className="w-full"
-                        >
-                            <Input
-                                placeholder="Name"
-                                prefix={<UserOutlined />}
-                            />
-                        </Form.Item>
-                        <Form.Item
-                            label="EMAIL"
-                            name="email"
-                            validateStatus={errors?.email ? "error" : ""}
-                            help={errors?.email ? errors?.email[0] : ""}
-                            className="w-full"
-                        >
-                            <Input
-                                placeholder="Email"
-                                prefix={<MailOutlined />}
-                            />
-                        </Form.Item>
-                        <Form.Item
-                            label="CONTACT"
-                            name="contact"
-                            validateStatus={errors?.contact ? "error" : ""}
-                            help={errors?.contact ? errors?.contact[0] : ""}
-                            className="w-full"
-                        >
-                            <Input type="number" prefix={<PhoneOutlined />} />
-                        </Form.Item>
-                    </div>
+    const steps = [
+        {
+            title: "Basic Information",
+            content: (
+                <div className="grid gap-4 lg:grid-cols-3 sm:grid-cols-1">
+                    <Form.Item
+                        label="BUSINESS NAME"
+                        name="name"
+                        validateStatus={errors?.name ? "error" : ""}
+                        help={errors?.name ? errors.name[0] : ""}
+                        className="w-full"
+                    >
+                        <Input placeholder="Name" prefix={<UserOutlined />} />
+                    </Form.Item>
+                    <Form.Item
+                        label="EMAIL"
+                        name="email"
+                        validateStatus={errors?.email ? "error" : ""}
+                        help={errors?.email ? errors?.email[0] : ""}
+                        className="w-full"
+                    >
+                        <Input placeholder="Email" prefix={<MailOutlined />} />
+                    </Form.Item>
+                    <Form.Item
+                        label="CONTACT"
+                        name="contact"
+                        validateStatus={errors?.contact ? "error" : ""}
+                        help={errors?.contact ? errors?.contact[0] : ""}
+                        className="w-full"
+                    >
+                        <Input type="number" prefix={<PhoneOutlined />} />
+                    </Form.Item>
+                </div>
+            ),
+        },
+        {
+            title: "Address Details",
+            content: (
+                <>
                     <div className="grid gap-4 lg:grid-cols-2 sm:grid-cols-1">
                         <Form.Item
                             label="ADDRESS"
@@ -169,89 +182,92 @@ export default function Create({ auth }) {
                             />
                         </Form.Item>
                     </div>
-
-                    <Form.Item
-                        label="DESCRIPTION"
-                        name="description"
-                        validateStatus={errors?.description ? "error" : ""}
-                        help={errors?.description ? errors?.description[0] : ""}
-                    >
-                        <TextArea
-                            placeholder="Business Description"
-                            allowClear
-                            rows={4}
-                        />
-                    </Form.Item>
+                </>
+            ),
+        },
+        {
+            title: "Description",
+            content: (
+                <Form.Item
+                    label="DESCRIPTION"
+                    name="description"
+                    validateStatus={errors?.description ? "error" : ""}
+                    help={errors?.description ? errors?.description[0] : ""}
+                >
+                    <TextArea
+                        placeholder="Business Description"
+                        allowClear
+                        rows={4}
+                    />
+                </Form.Item>
+            ),
+        },
+        {
+            title: "Uploads",
+            content: (
+                <>
                     <Form.Item
                         label="LOGO"
                         name="logo"
                         valuePropName="fileList"
-                        className="w-full"
-                        getValueFromEvent={(e) =>
-                            Array.isArray(e) ? e : e?.fileList
-                        }
+                        getValueFromEvent={handleUploadChange}
                         validateStatus={errors?.logo ? "error" : ""}
                         help={errors?.logo ? errors.logo[0] : ""}
                     >
-                        <Upload
-                            listType="picture"
-                            maxCount={1}
-                            {...Uploadprops}
-                        >
-                            <Button icon={<UploadOutlined />}>
-                                Click to Upload
-                            </Button>
+                        <Upload listType="picture-card" maxCount={1}>
+                            <div>
+                                <UploadOutlined />
+                                <div style={{ marginTop: 8 }}>Upload</div>
+                            </div>
                         </Upload>
                     </Form.Item>
 
                     <Form.Item
                         label="BUSINESS IMAGES"
-                        name="busniness_images"
+                        name="business_images"
                         valuePropName="fileList"
-                        className="w-full"
-                        getValueFromEvent={(e) =>
-                            Array.isArray(e) ? e : e?.fileList
-                        }
-                        validateStatus={errors?.busniness_images ? "error" : ""}
+                        getValueFromEvent={handleUploadChange}
+                        validateStatus={errors?.business_images ? "error" : ""}
                         help={
-                            errors?.busniness_images
-                                ? errors.busniness_images[0]
+                            errors?.business_images
+                                ? errors.business_images[0]
                                 : ""
                         }
                     >
-                        <Upload listType="picture" multiple {...Uploadprops}>
+                        <Upload listType="picture" multiple>
                             <Button icon={<UploadOutlined />}>
                                 Click to Upload
                             </Button>
                         </Upload>
                     </Form.Item>
+                </>
+            ),
+        },
+        {
+            title: "Permits",
+            content: (
+                <>
                     <Form.Item
                         label="MAYOR'S PERMIT"
                         name="mayors_permit"
                         valuePropName="fileList"
-                        className="w-full"
-                        getValueFromEvent={(e) =>
-                            Array.isArray(e) ? e : e?.fileList
-                        }
+                        getValueFromEvent={handleUploadChange}
                         validateStatus={errors?.mayors_permit ? "error" : ""}
                         help={
                             errors?.mayors_permit ? errors.mayors_permit[0] : ""
                         }
                     >
-                        <Upload listType="picture" multiple {...Uploadprops}>
+                        <Upload listType="picture" multiple>
                             <Button icon={<UploadOutlined />}>
                                 Click to Upload
                             </Button>
                         </Upload>
                     </Form.Item>
                     <Form.Item
-                        label="BUSINESS'S PERMIT"
+                        label="BUSINESS PERMIT"
                         name="business_permit"
                         valuePropName="fileList"
-                        className="w-full"
-                        getValueFromEvent={(e) =>
-                            Array.isArray(e) ? e : e?.fileList
-                        }
+                        getValueFromEvent={handleUploadChange}
                         validateStatus={errors?.business_permit ? "error" : ""}
                         help={
                             errors?.business_permit
@@ -259,7 +275,7 @@ export default function Create({ auth }) {
                                 : ""
                         }
                     >
-                        <Upload listType="picture" multiple {...Uploadprops}>
+                        <Upload listType="picture" multiple>
                             <Button icon={<UploadOutlined />}>
                                 Click to Upload
                             </Button>
@@ -269,27 +285,63 @@ export default function Create({ auth }) {
                         label="BIR CLEARANCE"
                         name="bir_clearance"
                         valuePropName="fileList"
-                        className="w-full"
-                        getValueFromEvent={(e) =>
-                            Array.isArray(e) ? e : e?.fileList
-                        }
+                        getValueFromEvent={handleUploadChange}
                         validateStatus={errors?.bir_clearance ? "error" : ""}
                         help={
                             errors?.bir_clearance ? errors.bir_clearance[0] : ""
                         }
                     >
-                        <Upload listType="picture" multiple {...Uploadprops}>
+                        <Upload listType="picture" multiple>
                             <Button icon={<UploadOutlined />}>
                                 Click to Upload
                             </Button>
                         </Upload>
                     </Form.Item>
-                    <Row justify="end">
-                        <Space size="small">
-                            <Button type="default" onClick={handleCancel}>
-                                Cancel
-                            </Button>
+                </>
+            ),
+        },
+    ];
 
+    const next = () => {
+        setCurrentStep((prev) => prev + 1);
+    };
+
+    const prev = () => {
+        setCurrentStep((prev) => prev - 1);
+    };
+
+    return (
+        <>
+            <Steps current={currentStep}>
+                {steps.map((step, index) => (
+                    <Steps.Step key={index} title={step.title} />
+                ))}
+            </Steps>
+
+            <Form
+                form={form}
+                layout="vertical"
+                autoComplete="off"
+                onFinish={handleSubmit}
+                className="mt-4"
+            >
+                <div className="steps-content">
+                    {steps[currentStep].content}
+                </div>
+
+                <Row justify="end" style={{ marginTop: 24 }}>
+                    <Space size="small">
+                        {currentStep > 0 && (
+                            <Button type="default" onClick={prev}>
+                                Previous
+                            </Button>
+                        )}
+                        {currentStep < steps.length - 1 && (
+                            <Button type="primary" onClick={next}>
+                                Next
+                            </Button>
+                        )}
+                        {currentStep === steps.length - 1 && (
                             <Button
                                 htmlType="submit"
                                 type="primary"
@@ -299,10 +351,10 @@ export default function Create({ auth }) {
                             >
                                 Create
                             </Button>
-                        </Space>
-                    </Row>
-                </Form>
-            </AuthenticatedLayout>
+                        )}
+                    </Space>
+                </Row>
+            </Form>
         </>
     );
 }
