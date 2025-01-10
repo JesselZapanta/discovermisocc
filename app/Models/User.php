@@ -25,6 +25,8 @@ class User extends Authenticatable
         'status',
         'birthdate',
         'type',
+        'country',
+        'type',
         'region',
         'province',
         'city',

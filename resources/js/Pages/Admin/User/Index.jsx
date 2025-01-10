@@ -336,6 +336,8 @@ export default function Index({ auth }) {
         fetchProvinces();
     }, [selectedRegion]);
 
+    console.log(selectedProvince);
+
     // Fetch Cities based on selected Province
     useEffect(() => {
         const fetchCities = async () => {

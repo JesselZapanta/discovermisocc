@@ -23,7 +23,8 @@ return new class extends Migration
             $table->string('birthdate')->nullable();
 
             $table->tinyInteger('type')->default(0);//0 = Domestic, 1 = International
-
+            
+            $table->string('country')->nullable();
             $table->string('region')->nullable();
             $table->string('province')->nullable();
             $table->string('city')->nullable();

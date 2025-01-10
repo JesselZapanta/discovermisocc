@@ -59,7 +59,7 @@ export default function Index({ auth }) {
             const res = await axios.get(`/admin/user/getdata?${params}`);
             setData(res.data.data);
             setTotal(res.data.total);
-        } catch {
+        } catch (err){
             console.log(err);
         } finally {
             setLoading(false);

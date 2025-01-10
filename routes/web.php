@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminDashboard;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminUserController;
+use App\Http\Controllers\AdminCityController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Entrepreneur\EntrepreneurBusinessController;
 use App\Http\Controllers\Entrepreneur\EntrepreneurDashboardController;
@@ -34,6 +35,10 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard
 Route::middleware(['auth', 'admin'])->group(callback: function () {
     Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 
+    Route::get('/admin/city', [AdminCityController::class, 'index'])->name('admin.city');
+    Route::get('/admin/city/getdata', [AdminCityController::class, 'getdata']);
+    Route::put('/admin/city/update/{id}', [AdminCityController::class, 'update']);
+
     Route::get('/admin/user', [AdminUserController::class, 'index'])->name('admin.user');
     Route::post('/admin/user/store', [AdminUserController::class, 'store']);
     Route::get('/admin/user/getdata', [AdminUserController::class, 'getdata']);
@@ -64,6 +69,11 @@ Route::middleware(['auth', 'entrepreneur'])->group(function () {
 
     Route::get('/entrepreneur/business', [EntrepreneurBusinessController::class, 'index'])->name('entrepreneur.business');
     Route::get('/entrepreneur/business/create', [EntrepreneurBusinessController::class, 'create'])->name('entrepreneur.business-create');
+
+    Route::post('/entrepreneur/business/logo/temp-upload', [EntrepreneurBusinessController::class, 'logoTempUpload']);
+    Route::post('/entrepreneur/business/logo/temp-remove/{filename}', [EntrepreneurBusinessController::class, 'removeLogoUpload']);
+    Route::post('/entrepreneur/business/logo/replace/{id}/{filename}', [EntrepreneurBusinessController::class, 'replaceLogoUpload']);
+
     Route::post('/entrepreneur/business/store', [EntrepreneurBusinessController::class, 'store']);
 });
 

@@ -1,5 +1,5 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head } from "@inertiajs/react";
+import { Head, usePage } from "@inertiajs/react";
 import { useState } from "react";
 import {
     Avatar,
@@ -27,8 +27,10 @@ import {
 } from "@ant-design/icons";
 
 export default function Create({ auth }) {
+
+    const [business, setBusiness] = useState(null)
+
     const [form] = Form.useForm();
-    const [currentStep, setCurrentStep] = useState(0);
     const [processing, setProcessing] = useState(false);
     const [errors, setErrors] = useState({});
 
@@ -37,14 +39,18 @@ export default function Create({ auth }) {
         setErrors({}); // Clear previous errors
 
         try {
-            const response = await axios.post("/entrepreneur/business/store", values);
+            const response = await axios.post(
+                "/entrepreneur/business/store",
+                values
+            );
 
             // Handle success response
             if (response.data.status === "created") {
                 handleCancel(); // Reset the form
                 notification.success({
-                    message: "Created!",
-                    description: "The user has been created successfully.",
+                    message: "Submitted!",
+                    description:
+                        "The business registration has been submitted successfully.",
                     placement: "bottomRight",
                 });
             }
@@ -67,13 +73,85 @@ export default function Create({ auth }) {
         form.resetFields();
     };
 
-    const Uploadprops = [];
+    const { props } = usePage();
+    const csrfToken = props.auth.csrf_token || "";
 
+    // For Logo
 
+    const [tempLogo, setTempLogo] = useState("");
+    const [isUpload, setIsUpload] = useState(false);
+
+    const removeLogo = (logo) => {
+        axios
+            .post(`/entrepreneur/business/logo/temp-remove/${logo}`)
+            .then((res) => {
+                if (res.data.status === "remove") {
+                    message.success("Logo removed.");
+                    setIsUpload(false);
+                }
+                if (res.data.status === "error") {
+                    alert("error");
+                }
+            });
+    };
+
+    const UploadLogoProps = {
+        name: "logo",
+        action: "/entrepreneur/business/logo/temp-upload",
+        headers: {
+            "X-CSRF-Token": csrfToken,
+        },
+
+        beforeUpload: (file) => {
+            const isPNG = file.type === "image/png";
+            const isJPG = file.type === "image/jpeg";
+
+            if (!isPNG && !isJPG) {
+                message.error(`${file.name} is not a png/jpg file.`);
+            }
+            return isPNG || isJPG || Upload.LIST_IGNORE;
+        },
+
+        onChange(info) {
+            if (info.file.status === "done") {
+                // Ensure the upload is complete
+                if (business) {
+                    axios
+                        .post(`/entrepreneur/business/logo/replace/${business.id}/${business.logo}`)
+                        .then((res) => {
+                            if (res.data.status === "replace") {
+                                message.success("File Replaced");
+                            }
+                        });
+                } else {
+                    message.success("Logo uploaded successfully.");
+                    setTempLogo(info.file.response);
+                    setIsUpload(true);
+                }
+            } else if (info.file.status === "error") {
+                message.error("Logo upload failed.");
+            }
+        },
+
+        onRemove(info) {
+            // Prevent removal if user exists
+            if (business) {
+                message.error("You cannot remove the logo.");
+                return false; // Prevent file removal
+            }
+
+            removeLogo(info.response);
+            return true;
+        },
+    };
+
+    const Uploadprops = {}
 
     return (
         <>
-            <AuthenticatedLayout page="Business Management" auth={auth}>
+            <AuthenticatedLayout page="Register Business" auth={auth}>
+                <Head title="Register Business" />
+
                 <Form
                     form={form}
                     layout="vertical"
@@ -196,7 +274,7 @@ export default function Create({ auth }) {
                         <Upload
                             listType="picture"
                             maxCount={1}
-                            {...Uploadprops}
+                            {...UploadLogoProps}
                         >
                             <Button icon={<UploadOutlined />}>
                                 Click to Upload
