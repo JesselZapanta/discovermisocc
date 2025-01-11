@@ -1,29 +1,17 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, usePage } from "@inertiajs/react";
+import { Head } from "@inertiajs/react";
 import {
-    Avatar,
     Button,
     Form,
-    message,
     notification,
     Row,
-    Select,
     Space,
     Table,
-    Tag,
-    Upload,
 } from "antd";
 import Search from "antd/es/input/Search";
 import {
-    LockOutlined,
-    MailOutlined,
     PlusOutlined,
-    UserOutlined,
     EditOutlined,
-    DeleteOutlined,
-    QuestionCircleOutlined,
-    UploadOutlined,
-    CalendarOutlined,
     CodeOutlined,
     CompassOutlined,
 } from "@ant-design/icons";
@@ -42,7 +30,7 @@ export default function Index({ auth }) {
     const [search, setSearch] = useState("");
     const [searching, setSearching] = useState(false);
     const [sortField, setSortField] = useState("id");
-    const [sortOrder, setSortOrder] = useState("asc");
+    const [sortOrder, setSortOrder] = useState("desc");
 
     const getData = async (isSearch = false) => {
         if (isSearch) {
@@ -190,24 +178,6 @@ export default function Index({ auth }) {
                                     icon={<EditOutlined />}
                                     onClick={() => showEditModal(record)}
                                 ></Button>
-                                {/* <Button
-                                    danger
-                                    shape="square"
-                                    icon={<DeleteOutlined />}
-                                    onClick={() =>
-                                        Modal.confirm({
-                                            title: "Delete?",
-                                            icon: <QuestionCircleOutlined />,
-                                            content:
-                                                "Are you sure you want to delete this data?",
-                                            okText: "Yes",
-                                            cancelText: "No",
-                                            onOk() {
-                                                handleDelete(record.id);
-                                            },
-                                        })
-                                    }
-                                /> */}
                             </Space>
                         )}
                     />

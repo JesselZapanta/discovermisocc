@@ -29,6 +29,11 @@ export default function AuthenticatedLayout({ auth, page, children }) {
             icon: <DashboardOutlined />,
         },
         {
+            label: <Link href={route("admin.facilatator")}>Facilatators</Link>,
+            key: "admin.facilatator",
+            icon: <DashboardOutlined />,
+        },
+        {
             label: <Link href={route("admin.user")}>Users</Link>,
             key: "admin.user",
             icon: <DashboardOutlined />,

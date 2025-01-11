@@ -55,7 +55,7 @@ export default function Index({ auth }) {
         ].join("&");
 
         try {
-            const res = await axios.get(`/admin/user/getdata?${params}`);
+            const res = await axios.get(`/admin/facilatator/getdata?${params}`);
             setData(res.data.data);
             setTotal(res.data.total);
         } catch {
@@ -77,7 +77,7 @@ export default function Index({ auth }) {
         getData(false);
     }, [page, sortField, sortOrder]);
 
-    const [user, setUser] = useState(false);
+    const [facilatator, setFacilatator] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const [api, contextHolder] = notification.useNotification();
@@ -98,39 +98,28 @@ export default function Index({ auth }) {
         form.resetFields();
     };
 
-    const showEditModal = (user) => {
+    const showEditModal = (facilatator) => {
         setIsModalOpen(true);
-        setUser(user);
-        
-        setType(user.type);
+        setFacilatator(facilatator);
 
-        if(user.type === 1){
-            setSelectedRegion("");
-            setSelectedProvince("");
-            setSelectedCity("");
-        }
-
-        const avatar = user.avatar
-                ? [
-                    {
-                        uid: "-1",
-                        name: user.avatar,
-                        url: `/storage/avatars/${user.avatar}`,
-                    },
-                ]
-                : [];
+        const avatar = facilatator.avatar
+            ? [
+                  {
+                      uid: "-1",
+                      name: facilatator.avatar,
+                      url: `/storage/avatars/${facilatator.avatar}`,
+                  },
+              ]
+            : [];
 
         form.setFieldsValue({
-            name: user.name,
-            email: user.email,
-            role: user.role,
-            status: user.status,
-            birthdate: user.birthdate,
-            type: user.type,
-            region: user.region || "",
-            province: user.province || "",
-            city: user.city || "",
-            barangay: user.barangay || "",
+            name: facilatator.name,
+            email: facilatator.email,
+            role: facilatator.role,
+            status: facilatator.status,
+            birthdate: facilatator.birthdate,
+            city: facilatator.city || "",
+            barangay: facilatator.barangay || "",
             password: "",
             avatar: avatar,
         });
@@ -176,9 +165,11 @@ export default function Index({ auth }) {
         onChange(info) {
             if (info.file.status === "done") {
                 // Ensure the upload is complete
-                if (user) {
+                if (facilatator) {
                     axios
-                        .post(`/avatar-image-replace/${user.id}/${user.avatar}`)
+                        .post(
+                            `/avatar-image-replace/${facilatator.id}/${facilatator.avatar}`
+                        )
                         .then((res) => {
                             if (res.data.status === "replace") {
                                 message.success("File Replaced");
@@ -195,8 +186,8 @@ export default function Index({ auth }) {
         },
 
         onRemove(info) {
-            // Prevent removal if user exists
-            if (user) {
+            // Prevent removal if facilatator exists
+            if (facilatator) {
                 message.error("You cannot remove the avatar.");
                 return false; // Prevent file removal
             }
@@ -209,10 +200,10 @@ export default function Index({ auth }) {
     const handleSubmit = async (values) => {
         setProcessing(true);
 
-        if (user) {
+        if (facilatator) {
             try {
                 const res = await axios.put(
-                    `/admin/user/update/${user.id}`,
+                    `/admin/facilatator/update/${facilatator.id}`,
                     values
                 );
                 if (res.data.status === "updated") {
@@ -221,7 +212,7 @@ export default function Index({ auth }) {
                         "success",
                         "bottomRight",
                         "Updated!",
-                        "The user has been updated successfully."
+                        "The facilatator has been updated successfully."
                     );
                 }
             } catch (err) {
@@ -231,14 +222,17 @@ export default function Index({ auth }) {
             }
         } else {
             try {
-                const res = await axios.post("/admin/user/store", values);
+                const res = await axios.post(
+                    "/admin/facilatator/store",
+                    values
+                );
                 if (res.data.status === "created") {
                     handleCancel();
                     openNotification(
                         "success",
                         "bottomRight",
                         "Created!",
-                        "The user has been created successfully."
+                        "The facilatator has been created successfully."
                     );
                 }
             } catch (err) {
@@ -252,7 +246,7 @@ export default function Index({ auth }) {
     //cancel modal and form
     const handleCancel = () => {
         setIsModalOpen(false);
-        setUser(false);
+        setFacilatator(false);
         form.resetFields();
         setErrors({});
         getData();
@@ -266,7 +260,7 @@ export default function Index({ auth }) {
         setLoading(true);
 
         try {
-            const res = await axios.delete(`/admin/user/destroy/${id}`);
+            const res = await axios.delete(`/admin/facilatator/destroy/${id}`);
 
             if (res.data.status === "deleted") {
                 handleCancel();
@@ -274,7 +268,7 @@ export default function Index({ auth }) {
                     "success",
                     "bottomRight",
                     "Deleted!",
-                    "The user has been deleted successfully."
+                    "The facilatator has been deleted successfully."
                 );
             }
         } catch (err) {
@@ -286,57 +280,12 @@ export default function Index({ auth }) {
 
     //for location
 
-    const [regions, setRegions] = useState([]);
-    const [provinces, setProvinces] = useState([]);
+    const selectedProvince = 104200000;
+
     const [cities, setCities] = useState([]);
     const [barangays, setBarangays] = useState([]);
 
-    const [selectedRegion, setSelectedRegion] = useState("");
-    const [selectedProvince, setSelectedProvince] = useState("");
     const [selectedCity, setSelectedCity] = useState("");
-
-    const [type, setType] = useState(0);
-
-    //fetch regions
-    useEffect(() => {
-        const fetchRegions = async () => {
-            try {
-                const response = await axios.get(
-                    "https://psgc.gitlab.io/api/regions/"
-                );
-                setRegions(response.data);
-            } catch (err) {
-                console.log(err);
-            }
-        };
-        fetchRegions();
-    }, []);
-
-    // Fetch Provinces based on selected Region
-    useEffect(() => {
-        const fetchProvinces = async () => {
-            if (selectedRegion) {
-                try {
-                    const response = await axios.get(
-                        `https://psgc.gitlab.io/api/regions/${selectedRegion}/provinces/`
-                    );
-                    setProvinces(response.data);
-                } catch (err) {
-                    console.log(err);
-                }
-            } else {
-                setCities([]);
-            }
-            setCities([]);
-            setBarangays([]);
-            setSelectedProvince("");
-            setSelectedCity("");
-        };
-
-        fetchProvinces();
-    }, [selectedRegion]);
-
-    console.log(selectedProvince);
 
     // Fetch Cities based on selected Province
     useEffect(() => {
@@ -380,11 +329,13 @@ export default function Index({ auth }) {
         fetchBarangays();
     }, [selectedCity]);
 
+    //100000000 = Code for north mindanao
+    //104200000  = code for mis occ
     return (
-        <AuthenticatedLayout page="User Management" auth={auth}>
-            <Head title="User Management" />
+        <AuthenticatedLayout page="Facilatator Management" auth={auth}>
+            <Head title="Facilatator Management" />
             {contextHolder}
-            <div className="py-2">List of Users</div>
+            <div className="py-2">List of Facilatators</div>
             <div className="flex gap-2 mb-2">
                 <Search
                     placeholder="Input name or email"
@@ -525,7 +476,9 @@ export default function Index({ auth }) {
             </div>
 
             <Modal
-                title={user ? "UPDATE USER INFORMATION" : "USER INFORMATION"}
+                title={
+                    facilatator ? "UPDATE USER INFORMATION" : "USER INFORMATION"
+                }
                 open={isModalOpen}
                 onCancel={handleCancel}
                 maskClosable={false}
@@ -574,9 +527,7 @@ export default function Index({ auth }) {
                                 <Select
                                     options={[
                                         { value: 0, label: "Admin" },
-                                        { value: 1, label: "Tourist" },
                                         { value: 2, label: "Facilator" },
-                                        { value: 3, label: "Entrepreneur" },
                                     ]}
                                 />
                             </Form.Item>
@@ -615,135 +566,109 @@ export default function Index({ auth }) {
                                     className="w-full"
                                 />
                             </Form.Item>
+                        </div>
+
+                        <div className="grid gap-4 lg:grid-cols-2 sm:grid-cols-1">
                             <Form.Item
                                 label="TYPE"
                                 name="type"
-                                validateStatus={errors?.type ? "error" : ""}
-                                help={errors?.type ? errors?.type[0] : ""}
                                 className="w-full"
                             >
                                 <Select
-                                    onChange={(value) => setType(value)}
+                                    disabled
+                                    defaultValue={0}
+                                    options={[{ value: 0, label: "Domestic" }]}
+                                />
+                            </Form.Item>
+                            <Form.Item
+                                label="COUNTRY"
+                                name="type"
+                                className="w-full"
+                            >
+                                <Select
+                                    disabled
+                                    defaultValue={138}
                                     options={[
-                                        { value: 0, label: "Domestic" },
-                                        { value: 1, label: "International" },
+                                        { value: 138, label: "Philippines" },
                                     ]}
                                 />
                             </Form.Item>
+                            <Form.Item
+                                label="REGION"
+                                name="region"
+                                className="w-full"
+                            >
+                                <Select
+                                    disabled
+                                    defaultValue={100000000}
+                                    options={[
+                                        {
+                                            value: 100000000,
+                                            label: "Northern Mindanao",
+                                        },
+                                    ]}
+                                />
+                            </Form.Item>
+                            <Form.Item
+                                label="PROVINCE"
+                                name="province"
+                                className="w-full"
+                            >
+                                <Select
+                                    disabled
+                                    defaultValue={104200000}
+                                    options={[
+                                        {
+                                            value: 104200000,
+                                            label: "Misamis Occidental",
+                                        },
+                                    ]}
+                                />
+                            </Form.Item>
+                            <Form.Item
+                                label="CITY"
+                                name="city"
+                                validateStatus={errors?.city ? "error" : ""}
+                                help={errors?.city ? errors?.city[0] : ""}
+                                className="w-full"
+                            >
+                                <Select
+                                    value={selectedCity}
+                                    onChange={(value) => setSelectedCity(value)}
+                                    disabled={!selectedProvince}
+                                >
+                                    {cities.map((city) => (
+                                        <Option
+                                            key={city.code}
+                                            value={city.code}
+                                        >
+                                            {city.name}
+                                        </Option>
+                                    ))}
+                                </Select>
+                            </Form.Item>
+
+                            <Form.Item
+                                label="BARANGAY"
+                                name="barangay"
+                                validateStatus={errors?.barangay ? "error" : ""}
+                                help={
+                                    errors?.barangay ? errors?.barangay[0] : ""
+                                }
+                                className="w-full"
+                            >
+                                <Select disabled={!selectedCity}>
+                                    {barangays.map((barangay) => (
+                                        <Option
+                                            key={barangay.code}
+                                            value={barangay.code}
+                                        >
+                                            {barangay.name}
+                                        </Option>
+                                    ))}
+                                </Select>
+                            </Form.Item>
                         </div>
-                        {/* show only if  */}
-                        {type === 0 && (
-                            <div className="grid gap-4 lg:grid-cols-2 sm:grid-cols-1">
-                                <Form.Item
-                                    label="REGION"
-                                    name="region"
-                                    validateStatus={
-                                        errors?.region ? "error" : ""
-                                    }
-                                    help={
-                                        errors?.region ? errors?.region[0] : ""
-                                    }
-                                    className="w-full"
-                                >
-                                    <Select
-                                        value={selectedRegion}
-                                        onChange={(value) =>
-                                            setSelectedRegion(value)
-                                        }
-                                    >
-                                        {regions.map((region) => (
-                                            <Option
-                                                key={region.code}
-                                                value={region.code}
-                                            >
-                                                {region.name}
-                                            </Option>
-                                        ))}
-                                    </Select>
-                                </Form.Item>
-
-                                <Form.Item
-                                    label="PROVINCE"
-                                    name="province"
-                                    validateStatus={
-                                        errors?.province ? "error" : ""
-                                    }
-                                    help={
-                                        errors?.province
-                                            ? errors?.province[0]
-                                            : ""
-                                    }
-                                    className="w-full"
-                                >
-                                    <Select
-                                        value={selectedProvince}
-                                        onChange={(value) =>
-                                            setSelectedProvince(value)
-                                        }
-                                        disabled={!selectedRegion}
-                                    >
-                                        {provinces.map((province) => (
-                                            <Option
-                                                key={province.code}
-                                                value={province.code}
-                                            >
-                                                {province.name}
-                                            </Option>
-                                        ))}
-                                    </Select>
-                                </Form.Item>
-
-                                <Form.Item
-                                    label="CITY"
-                                    name="city"
-                                    validateStatus={errors?.city ? "error" : ""}
-                                    help={errors?.city ? errors?.city[0] : ""}
-                                    className="w-full"
-                                >
-                                    <Select
-                                        value={selectedCity}
-                                        onChange={(value) =>
-                                            setSelectedCity(value)
-                                        }
-                                        disabled={!selectedProvince}
-                                    >
-                                        {cities.map((city) => (
-                                            <Option
-                                                key={city.code}
-                                                value={city.code}
-                                            >
-                                                {city.name}
-                                            </Option>
-                                        ))}
-                                    </Select>
-                                </Form.Item>
-
-                                <Form.Item
-                                    label="BARANGAY"
-                                    name="barangay"
-                                    validateStatus={
-                                        errors?.barangay ? "error" : ""
-                                    }
-                                    help={
-                                        errors?.barangay
-                                            ? errors?.barangay[0]
-                                            : ""
-                                    }
-                                    className="w-full"
-                                >
-                                    <Select disabled={!selectedCity}>
-                                        {barangays.map((barangay) => (
-                                            <Option
-                                                key={barangay.code}
-                                                value={barangay.code}
-                                            >
-                                                {barangay.name}
-                                            </Option>
-                                        ))}
-                                    </Select>
-                                </Form.Item>
-                            </div>
-                        )}
 
                         <Form.Item
                             label="PASSWORD"
@@ -813,7 +738,7 @@ export default function Index({ auth }) {
                                 disabled={processing}
                                 loading={processing}
                             >
-                                {user ? "Update" : "Create"}
+                                {facilatator ? "Update" : "Create"}
                             </Button>
                         </Space>
                     </Row>

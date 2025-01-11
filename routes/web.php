@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminDashboard;
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminFacilatatorController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\AdminCityController;
 use App\Http\Controllers\DashboardController;
@@ -38,6 +39,12 @@ Route::middleware(['auth', 'admin'])->group(callback: function () {
     Route::get('/admin/city', [AdminCityController::class, 'index'])->name('admin.city');
     Route::get('/admin/city/getdata', [AdminCityController::class, 'getdata']);
     Route::put('/admin/city/update/{id}', [AdminCityController::class, 'update']);
+
+    Route::get('/admin/facilatator', [AdminFacilatatorController::class, 'index'])->name('admin.facilatator');
+    Route::post('/admin/facilatator/store', [AdminFacilatatorController::class, 'store']);
+    Route::get('/admin/facilatator/getdata', [AdminFacilatatorController::class, 'getdata']);
+    Route::put('/admin/facilatator/update/{id}', [AdminFacilatatorController::class, 'update']);
+    Route::delete('/admin/facilatator/destroy/{id}', [AdminFacilatatorController::class, 'destroy']);
 
     Route::get('/admin/user', [AdminUserController::class, 'index'])->name('admin.user');
     Route::post('/admin/user/store', [AdminUserController::class, 'store']);

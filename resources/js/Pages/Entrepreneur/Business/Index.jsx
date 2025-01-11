@@ -40,7 +40,7 @@ export default function Index({ auth }) {
     const [search, setSearch] = useState("");
     const [searching, setSearching] = useState(false);
     const [sortField, setSortField] = useState("id");
-    const [sortOrder, setSortOrder] = useState("asc");
+    const [sortOrder, setSortOrder] = useState("desc");
 
     const getData = async (isSearch = false) => {
         if (isSearch) {
