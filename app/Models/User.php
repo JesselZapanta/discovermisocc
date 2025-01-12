@@ -24,6 +24,7 @@ class User extends Authenticatable
         'role',
         'status',
         'birthdate',
+        'sex',
         'type',
         'country',
         'type',
@@ -55,5 +56,12 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+
+    //country relation
+    public function country()
+    {
+        return $this->belongsTo(Country::class, 'country');
     }
 }

@@ -22,7 +22,8 @@ class UserSeeder extends Seeder
                 'password' => bcrypt('admin'),
                 'role' => 0,
                 'status' => 1,
-                'type' => 1,
+                'country' => 138,
+                'type' => 0,
                 'avatar' => null,
             ],
             [
@@ -32,7 +33,8 @@ class UserSeeder extends Seeder
                 'password' => bcrypt('tourist'),
                 'role' => 1,
                 'status' => 1,
-                'type' => 1,
+                'country' => 138,
+                'type' => 0,
                 'avatar' => null,
             ],
             [
@@ -42,7 +44,8 @@ class UserSeeder extends Seeder
                 'password' => bcrypt('facilator'),
                 'role' => 2,
                 'status' => 1,
-                'type' => 1,
+                'country' => 138,
+                'type' => 0,
                 'avatar' => null,
             ],
             [
@@ -52,11 +55,12 @@ class UserSeeder extends Seeder
                 'password' => bcrypt('entrepreneur'),
                 'role' => 3,
                 'status' => 1,
-                'type' => 1,
+                'country' => 138,
+                'type' => 0,
                 'avatar' => null,
             ],
         ];
 
-        User::insertOrIgnore($users);
+        User::insert($users);
     }
 }

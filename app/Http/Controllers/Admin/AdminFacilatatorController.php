@@ -141,6 +141,12 @@ class AdminFacilatatorController extends Controller
             unset($data['avatar']); // Do not modify the avatar if none is provided
         }
 
+        $data['type'] = 0;
+        $data['country'] = 138;
+        $data['region'] = 100000000;
+        $data['province'] = 104200000;
+
+
         $user->update($data);
 
         return response()->json([

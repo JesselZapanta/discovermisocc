@@ -21,10 +21,11 @@ return new class extends Migration
             $table->tinyInteger('status')->default(1);//1 = active, 0 = inactive
             
             $table->string('birthdate')->nullable();
+            $table->tinyText('sex')->nullable();
 
             $table->tinyInteger('type')->default(0);//0 = Domestic, 1 = International
             
-            $table->string('country')->nullable();
+            $table->foreignId('country')->constrained('countries')->onDelete('cascade'); 
             $table->string('region')->nullable();
             $table->string('province')->nullable();
             $table->string('city')->nullable();

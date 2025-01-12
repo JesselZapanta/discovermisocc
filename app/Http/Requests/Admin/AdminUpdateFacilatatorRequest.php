@@ -13,7 +13,7 @@ class AdminUpdateFacilatatorRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -25,14 +25,22 @@ class AdminUpdateFacilatatorRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required','string','lowercase','email','max:255','unique:users,email'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => ['required', 'integer', Rule::in('1', '0')],
+            'email' => [
+                'required',
+                'string',
+                'lowercase',
+                'email',
+                'max:255',
+                Rule::unique('users')->ignore($this->route('id'))
+            ],
+            'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
+            'role' => ['required', 'integer', Rule::in('0', '2')],
             'status' => ['required', 'integer', Rule::in('1', '0')],
-            'birthdate' => ['required'],
+            'sex' => ['required', 'string', Rule::in('Male', 'Female')],
+            'birthdate' => ['required', 'date'],
             'city' => ['string', 'nullable', 'required_if:type,0'],
             'barangay' => ['string', 'nullable', 'required_if:type,0'],
-            'avatar' => ['nullable']
+            'avatar' => ['nullable'],
         ];
     }
 }

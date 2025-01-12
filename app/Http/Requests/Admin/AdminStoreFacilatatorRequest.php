@@ -29,6 +29,7 @@ class AdminStoreFacilatatorRequest extends FormRequest
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'role' => ['required', 'integer', Rule::in('1', '0')],
             'status' => ['required', 'integer', Rule::in('1', '0')],
+            'sex' => ['required', 'string', Rule::in('Male', 'Female')],
             'birthdate' => ['required'],
             'city' => ['string', 'nullable', 'required_if:type,0'],
             'barangay' => ['string', 'nullable', 'required_if:type,0'],

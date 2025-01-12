@@ -117,6 +117,7 @@ export default function Index({ auth }) {
             email: facilatator.email,
             role: facilatator.role,
             status: facilatator.status,
+            sex: facilatator.sex,
             birthdate: facilatator.birthdate,
             city: facilatator.city || "",
             barangay: facilatator.barangay || "",
@@ -410,20 +411,6 @@ export default function Index({ auth }) {
                     />
 
                     <Column
-                        sorter={true}
-                        title="Type"
-                        dataIndex="type"
-                        key="type"
-                        render={(_, record) =>
-                            record.type === 0 ? (
-                                <Tag color="geekblue">Domestic</Tag>
-                            ) : (
-                                <Tag color="purple">International</Tag>
-                            )
-                        }
-                    />
-
-                    <Column
                         title="Role"
                         dataIndex="role"
                         key="role"
@@ -547,6 +534,20 @@ export default function Index({ auth }) {
                             </Form.Item>
                         </div>
                         <div className="flex gap-4">
+                            <Form.Item
+                                label="SEX"
+                                name="sex"
+                                validateStatus={errors?.sex ? "error" : ""}
+                                help={errors?.sex ? errors?.sex[0] : ""}
+                                className="w-full"
+                            >
+                                <Select
+                                    options={[
+                                        { value: "Male", label: "Male" },
+                                        { value: "Female", label: "Female" },
+                                    ]}
+                                />
+                            </Form.Item>
                             <Form.Item
                                 label="BIRTHDATE"
                                 name="birthdate"
