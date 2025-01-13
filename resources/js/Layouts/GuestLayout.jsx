@@ -1,17 +1,38 @@
-import ApplicationLogo from '@/Components/ApplicationLogo';
-import { Link } from '@inertiajs/react';
+
+import { Carousel } from "antd";
+import Avatar from "antd/es/avatar/avatar";
 
 export default function GuestLayout({ children }) {
     return (
-        <div className="flex min-h-screen flex-col items-center bg-gray-100 pt-6 sm:justify-center sm:pt-0">
-            <div>
-                <Link href="/">
-                    <ApplicationLogo className="h-20 w-20 fill-current text-gray-500" />
-                </Link>
-            </div>
+        <div className="h-screen w-screen relative">
+            <Carousel autoplay infinite={true} className="h-full w-full">
+                <div>
+                    <h3 className="h-screen flex items-center justify-center text-white bg-blue-500">
+                        1
+                    </h3>
+                </div>
+                <div>
+                    <h3 className="h-screen flex items-center justify-center text-white bg-red-500">
+                        2
+                    </h3>
+                </div>
+                <div>
+                    <h3 className="h-screen flex items-center justify-center text-white bg-green-500">
+                        3
+                    </h3>
+                </div>
+                <div>
+                    <h3 className="h-screen flex items-center justify-center text-white bg-purple-500">
+                        4
+                    </h3>
+                </div>
+            </Carousel>
 
-            <div className="mt-6 w-full overflow-hidden bg-white px-6 py-4 shadow-md sm:max-w-md sm:rounded-lg">
-                {children}
+            {/* Centered Form */}
+            <div className="absolute inset-0 flex items-center justify-center z-10">
+                <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
+                    {children}
+                </div>
             </div>
         </div>
     );
