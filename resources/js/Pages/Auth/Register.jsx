@@ -1,6 +1,6 @@
 import GuestLayout from "@/Layouts/GuestLayout";
 import { Head, Link, router, usePage } from "@inertiajs/react";
-import { Button, Form, Input, Select, Upload } from "antd";
+import { Button, Form, Input, message, Select, Upload } from "antd";
 import { useEffect, useState } from "react";
 import {
     MailOutlined,
@@ -139,7 +139,7 @@ export default function Register() {
     const [isUpload, setIsUpload] = useState(false);
 
     const removeAvatar = (avatar) => {
-        axios.post(`/avatar-temp-remove/${avatar}`).then((res) => {
+        axios.post(`/register/avatar-temp-remove/${avatar}`).then((res) => {
             if (res.data.status === "remove") {
                 message.success("Avatar removed.");
                 setIsUpload(false);
@@ -152,7 +152,7 @@ export default function Register() {
 
     const Uploadprops = {
         name: "avatar",
-        action: "/avatar-temp-upload",
+        action: "/register/avatar-temp-upload",
         headers: {
             "X-CSRF-Token": csrfToken,
         },
@@ -172,7 +172,9 @@ export default function Register() {
                 // Ensure the upload is complete
                 if (user) {
                     axios
-                        .post(`/avatar-image-replace/${user.id}/${user.avatar}`)
+                        .post(
+                            `/register/avatar-image-replace/${user.id}/${user.avatar}`
+                        )
                         .then((res) => {
                             if (res.data.status === "replace") {
                                 message.success("File Replaced");
@@ -190,10 +192,10 @@ export default function Register() {
 
         onRemove(info) {
             // Prevent removal if user exists
-            if (user) {
-                message.error("You cannot remove the avatar.");
-                return false; // Prevent file removal
-            }
+            // if (user) {
+            //     message.error("You cannot remove the avatar.");
+            //     return false; // Prevent file removal
+            // }
 
             removeAvatar(info.response);
             return true;
@@ -215,27 +217,44 @@ export default function Register() {
                     password: "",
                 }}
             >
-                <Form.Item
-                    label="NAME"
-                    name="name"
-                    validateStatus={errors?.name ? "error" : ""}
-                    help={errors?.name ? errors.name[0] : ""}
-                >
-                    <Input placeholder="Name" prefix={<UserOutlined />} />
-                </Form.Item>
-                <Form.Item
-                    label="EMAIL"
-                    name="email"
-                    validateStatus={errors?.email ? "error" : ""}
-                    help={errors?.email ? errors?.email[0] : ""}
-                >
-                    <Input
-                        placeholder="Email"
-                        size="large"
-                        prefix={<MailOutlined />}
-                    />
-                </Form.Item>
-                <div className="flex gap-4">
+                <div className="grid gap-4 lg:grid-cols-2 sm:grid-cols-1">
+                    <Form.Item
+                        label="NAME"
+                        name="name"
+                        validateStatus={errors?.name ? "error" : ""}
+                        help={errors?.name ? errors.name[0] : ""}
+                    >
+                        <Input placeholder="Name" prefix={<UserOutlined />} />
+                    </Form.Item>
+                    <Form.Item
+                        label="EMAIL"
+                        name="email"
+                        validateStatus={errors?.email ? "error" : ""}
+                        help={errors?.email ? errors?.email[0] : ""}
+                    >
+                        <Input
+                            placeholder="Email"
+                            size="large"
+                            prefix={<MailOutlined />}
+                        />
+                    </Form.Item>
+                </div>
+
+                <div className="grid gap-4 lg:grid-cols-2 sm:grid-cols-1">
+                    <Form.Item
+                        label="SEX"
+                        name="sex"
+                        validateStatus={errors?.sex ? "error" : ""}
+                        help={errors?.sex ? errors?.sex[0] : ""}
+                        className="w-full"
+                    >
+                        <Select
+                            options={[
+                                { value: "Male", label: "Male" },
+                                { value: "Female", label: "Female" },
+                            ]}
+                        />
+                    </Form.Item>
                     <Form.Item
                         label="BIRTHDATE"
                         name="birthdate"
@@ -247,6 +266,22 @@ export default function Register() {
                             type="date"
                             prefix={<CalendarOutlined />}
                             className="w-full"
+                        />
+                    </Form.Item>
+                </div>
+                <div className="grid gap-4 lg:grid-cols-2 sm:grid-cols-1">
+                    <Form.Item
+                        label="ROLE"
+                        name="role"
+                        validateStatus={errors?.role ? "error" : ""}
+                        help={errors?.role ? errors?.role[0] : ""}
+                        className="w-full"
+                    >
+                        <Select
+                            options={[
+                                { value: 1, label: "Tourist" },
+                                { value: 3, label: "Entrepreneur" },
+                            ]}
                         />
                     </Form.Item>
                     <Form.Item
@@ -265,6 +300,7 @@ export default function Register() {
                         />
                     </Form.Item>
                 </div>
+
                 {/* show only if  */}
                 {type === 0 && (
                     <div className="grid gap-4 lg:grid-cols-2 sm:grid-cols-1">
@@ -372,37 +408,39 @@ export default function Register() {
                     </Form.Item>
                 )}
 
-                <Form.Item
-                    label="PASSWORD"
-                    name="password"
-                    validateStatus={errors?.password ? "error" : ""}
-                    help={errors?.password ? errors?.password[0] : ""}
-                >
-                    <Input.Password
-                        placeholder="Password"
-                        type="password"
-                        prefix={<LockOutlined />}
-                    />
-                </Form.Item>
+                <div className="grid gap-4 lg:grid-cols-2 sm:grid-cols-1">
+                    <Form.Item
+                        label="PASSWORD"
+                        name="password"
+                        validateStatus={errors?.password ? "error" : ""}
+                        help={errors?.password ? errors?.password[0] : ""}
+                    >
+                        <Input.Password
+                            placeholder="Password"
+                            type="password"
+                            prefix={<LockOutlined />}
+                        />
+                    </Form.Item>
 
-                <Form.Item
-                    label="RE-TYPE PASSWORD"
-                    name="password_confirmation"
-                    validateStatus={
-                        errors?.password_confirmation ? "error" : ""
-                    }
-                    help={
-                        errors?.password_confirmation
-                            ? errors?.password_confirmation[0]
-                            : ""
-                    }
-                >
-                    <Input.Password
-                        placeholder="Re-type Password"
-                        type="password"
-                        prefix={<LockOutlined />}
-                    />
-                </Form.Item>
+                    <Form.Item
+                        label="RE-TYPE PASSWORD"
+                        name="password_confirmation"
+                        validateStatus={
+                            errors?.password_confirmation ? "error" : ""
+                        }
+                        help={
+                            errors?.password_confirmation
+                                ? errors?.password_confirmation[0]
+                                : ""
+                        }
+                    >
+                        <Input.Password
+                            placeholder="Re-type Password"
+                            type="password"
+                            prefix={<LockOutlined />}
+                        />
+                    </Form.Item>
+                </div>
                 <Form.Item
                     label="AVATAR"
                     name="avatar"
@@ -435,12 +473,9 @@ export default function Register() {
                 </Form.Item>
             </Form>
             <div className="mt-4 flex items-center justify-end">
-                <Link
-                    href={route("login")}
-                    className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                >
+                <Button type="link" href={route("login")}>
                     Already registered?
-                </Link>
+                </Button>
             </div>
         </GuestLayout>
     );

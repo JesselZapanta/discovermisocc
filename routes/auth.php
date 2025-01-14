@@ -14,6 +14,11 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])
         ->name('register');
+    
+    //for avatar
+    Route::post('/register/avatar-temp-upload', [RegisteredUserController::class, 'tempUpload']);
+    Route::post('/register/avatar-temp-remove/{filename}', [RegisteredUserController::class, 'removeUpload']);
+    Route::post('/register/avatar-image-replace/{id}/{filename}', [RegisteredUserController::class, 'replaceUpload']);
 
     Route::post('register', [RegisteredUserController::class, 'store']);
 
