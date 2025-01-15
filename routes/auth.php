@@ -18,7 +18,6 @@ Route::middleware('guest')->group(function () {
     //for avatar
     Route::post('/register/avatar-temp-upload', [RegisteredUserController::class, 'tempUpload']);
     Route::post('/register/avatar-temp-remove/{filename}', [RegisteredUserController::class, 'removeUpload']);
-    Route::post('/register/avatar-image-replace/{id}/{filename}', [RegisteredUserController::class, 'replaceUpload']);
 
     Route::post('register', [RegisteredUserController::class, 'store']);
 

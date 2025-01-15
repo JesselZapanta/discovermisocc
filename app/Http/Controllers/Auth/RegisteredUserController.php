@@ -52,31 +52,6 @@ class RegisteredUserController extends Controller
         }
     }
 
-    public function replaceUpload($id, $fileName){
-        $data = User::find($id);
-        $oldAvatar = $data->avatar;
-
-        // return $oldAvatar;
-        $data->avatar = null;
-        $data->save();
-
-        if (Storage::disk('public')->exists('avatars/' . $oldAvatar)) {
-            Storage::disk('public')->delete('avatars/' . $oldAvatar);
-
-            if (Storage::disk('public')->exists('temp/' . $fileName)) {
-                Storage::disk('public')->delete('temp/' . $fileName);
-            }
-
-            return response()->json([
-                'status' => 'replace'
-            ], 200);
-        }
-
-        return response()->json([
-            'status' => 'error'
-        ], 200);
-    }
-
     /**
      * Handle an incoming registration request.
      *
@@ -102,7 +77,7 @@ class RegisteredUserController extends Controller
             $imgFilename = $request->avatar[0]['response'];
             $data['avatar'] = $imgFilename;
 
-            $data['password'] = bcrypt($data['password']);
+            $data['password'] = bcrypt(value: $data['password']);
 
             if (Storage::disk('public')->exists('temp/' . $imgFilename)) {
                 // Move the file
