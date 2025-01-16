@@ -77,10 +77,21 @@ Route::middleware(['auth', 'entrepreneur'])->group(function () {
     Route::get('/entrepreneur/business', [EntrepreneurBusinessController::class, 'index'])->name('entrepreneur.business');
     Route::get('/entrepreneur/business/create', [EntrepreneurBusinessController::class, 'create'])->name('entrepreneur.business-create');
 
-    Route::post('/entrepreneur/business/logo/temp-upload', [EntrepreneurBusinessController::class, 'logoTempUpload']);
-    Route::post('/entrepreneur/business/logo/temp-remove/{filename}', [EntrepreneurBusinessController::class, 'removeLogoUpload']);
-    Route::post('/entrepreneur/business/logo/replace/{id}/{filename}', [EntrepreneurBusinessController::class, 'replaceLogoUpload']);
+    //logo
+    Route::post('/entrepreneur/logo-temp-upload', [EntrepreneurBusinessController::class, 'logoTempUpload']);
+    Route::post('/entrepreneur/logo-temp-remove/{filename}', [EntrepreneurBusinessController::class, 'removeLogoUpload']);
+    Route::post('/entrepreneur/logo-image-replace/{id}/{filename}', [EntrepreneurBusinessController::class, 'replaceLogoUpload']);
 
+    //logo
+    Route::post('/entrepreneur/mayor-permit-temp-upload', [EntrepreneurBusinessController::class, 'mayorPermitTempUpload']);
+    Route::post('/entrepreneur/mayor-permit-temp-remove/{filename}', [EntrepreneurBusinessController::class, 'removeMayorPermitUpload']);
+    Route::post('/entrepreneur/mayor-permit-image-replace/{id}/{filename}', [EntrepreneurBusinessController::class, 'replaceMayorPermitUpload']);
+    
+    //business_permit
+    Route::post('/entrepreneur/business-permit-temp-upload', [EntrepreneurBusinessController::class, 'businessPermitTempUpload']);
+    Route::post('/entrepreneur/business-permit-temp-remove/{filename}', [EntrepreneurBusinessController::class, 'removeBusinessPermitUpload']);
+    Route::post('/entrepreneur/business-permit-image-replace/{id}/{filename}', [EntrepreneurBusinessController::class, 'replaceBusinessPermitUpload']);
+    
     Route::post('/entrepreneur/business/store', [EntrepreneurBusinessController::class, 'store']);
 });
 

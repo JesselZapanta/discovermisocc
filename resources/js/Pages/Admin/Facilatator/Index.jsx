@@ -154,6 +154,13 @@ export default function Index({ auth }) {
         },
 
         beforeUpload: (file) => {
+            if (isUpload) {
+                message.error(
+                    "You cannot upload a new avatar while one is already uploaded."
+                );
+                return Upload.LIST_IGNORE;
+            }
+            
             const isPNG = file.type === "image/png";
             const isJPG = file.type === "image/jpeg";
 

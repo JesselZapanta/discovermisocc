@@ -137,18 +137,6 @@
 
         const [isUpload, setIsUpload] = useState(false);
 
-        const removeAvatar = (avatar) => {
-            axios.post(`/register/avatar-temp-remove/${avatar}`).then((res) => {
-                if (res.data.status === "remove") {
-                    message.success("Avatar removed.");
-                    setIsUpload(false);
-                }
-                if (res.data.status === "error") {
-                    alert("error");
-                }
-            });
-        };
-
         const Uploadprops = {
             name: "avatar",
             action: "/register/avatar-temp-upload",

@@ -73,7 +73,7 @@ class AdminFacilatatorController extends Controller
             }
 
             return response()->json([
-                'status' => 'replace'
+                'status' => 'replace',
             ], 200);
         }
 

@@ -2,9 +2,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, usePage } from "@inertiajs/react";
 import { useState } from "react";
 import {
-    Avatar,
     Button,
-    Divider,
     Form,
     Input,
     message,
@@ -27,8 +25,7 @@ import {
 } from "@ant-design/icons";
 
 export default function Create({ auth }) {
-
-    const [business, setBusiness] = useState(null)
+    const [business, setBusiness] = useState(null);
 
     const [form] = Form.useForm();
     const [processing, setProcessing] = useState(false);
@@ -71,6 +68,15 @@ export default function Create({ auth }) {
     };
     const handleCancel = () => {
         form.resetFields();
+
+        //remove the images
+        if (isLogoUpload) {
+            removeAvatar(tempLogo);
+        }
+
+        if (isMayorPermitUpload) {
+            removeMayorPermit(tempMayorPermit);
+        }
     };
 
     const { props } = usePage();
@@ -79,30 +85,35 @@ export default function Create({ auth }) {
     // For Logo
 
     const [tempLogo, setTempLogo] = useState("");
-    const [isUpload, setIsUpload] = useState(false);
+    const [isLogoUpload, setIsLogoUpload] = useState(false);
 
     const removeLogo = (logo) => {
-        axios
-            .post(`/entrepreneur/business/logo/temp-remove/${logo}`)
-            .then((res) => {
-                if (res.data.status === "remove") {
-                    message.success("Logo removed.");
-                    setIsUpload(false);
-                }
-                if (res.data.status === "error") {
-                    alert("error");
-                }
-            });
+        axios.post(`/entrepreneur/logo-temp-remove/${logo}`).then((res) => {
+            if (res.data.status === "remove") {
+                message.success("Logo removed.");
+                setIsLogoUpload(false);
+            }
+            if (res.data.status === "error") {
+                alert("error");
+            }
+        });
     };
 
     const UploadLogoProps = {
         name: "logo",
-        action: "/entrepreneur/business/logo/temp-upload",
+        action: "/entrepreneur/logo-temp-upload",
         headers: {
             "X-CSRF-Token": csrfToken,
         },
 
         beforeUpload: (file) => {
+            if (isLogoUpload) {
+                message.error(
+                    "You cannot upload a new logo while one is already uploaded."
+                );
+                return Upload.LIST_IGNORE;
+            }
+
             const isPNG = file.type === "image/png";
             const isJPG = file.type === "image/jpeg";
 
@@ -117,7 +128,9 @@ export default function Create({ auth }) {
                 // Ensure the upload is complete
                 if (business) {
                     axios
-                        .post(`/entrepreneur/business/logo/replace/${business.id}/${business.logo}`)
+                        .post(
+                            `/entrepreneur/logo-image-replace/${business.id}/${business.logo}`
+                        )
                         .then((res) => {
                             if (res.data.status === "replace") {
                                 message.success("File Replaced");
@@ -126,7 +139,7 @@ export default function Create({ auth }) {
                 } else {
                     message.success("Logo uploaded successfully.");
                     setTempLogo(info.file.response);
-                    setIsUpload(true);
+                    setIsLogoUpload(true);
                 }
             } else if (info.file.status === "error") {
                 message.error("Logo upload failed.");
@@ -134,7 +147,7 @@ export default function Create({ auth }) {
         },
 
         onRemove(info) {
-            // Prevent removal if user exists
+            // Prevent removal if business exists
             if (business) {
                 message.error("You cannot remove the logo.");
                 return false; // Prevent file removal
@@ -145,7 +158,161 @@ export default function Create({ auth }) {
         },
     };
 
-    const Uploadprops = {}
+    // For MayorPermit
+
+    const [tempMayorPermit, setTempMayorPermit] = useState("");
+    const [isMayorPermitUpload, setIsMayorPermitUpload] = useState(false);
+
+    const removeMayorPermit = (filename) => {
+        axios
+            .post(`/entrepreneur/business-permit-temp-remove/${filename}`)
+            .then((res) => {
+                if (res.data.status === "remove") {
+                    message.success("Mayor's permit removed.");
+                    setIsMayorPermitUpload(false);
+                }
+                if (res.data.status === "error") {
+                    alert("error");
+                }
+            });
+    };
+
+    const UploadMayorPermitProps = {
+        name: "mayor_permit",
+        action: "/entrepreneur/business-permit-temp-upload",
+        headers: {
+            "X-CSRF-Token": csrfToken,
+        },
+
+        beforeUpload: (file) => {
+            if (isMayorPermitUpload) {
+                message.error(
+                    "You cannot upload a new business's permit while one is already uploaded."
+                );
+                return Upload.LIST_IGNORE;
+            }
+
+            const isPDF = file.type === "application/pdf";
+
+            if (!isPDF) {
+                message.error(`${file.name} is not a PDF file.`);
+            }
+            return isPDF || Upload.LIST_IGNORE;
+        },
+
+        onChange(info) {
+            if (info.file.status === "done") {
+                // Ensure the upload is complete
+                if (business) {
+                    axios
+                        .post(
+                            `/entrepreneur/business-permit-image-replace/${business.id}/${business.mayor_permit}`
+                        )
+                        .then((res) => {
+                            if (res.data.status === "replace") {
+                                message.success("File Replaced");
+                            }
+                        });
+                } else {
+                    message.success("Mayor's permit uploaded successfully.");
+                    setTempMayorPermit(info.file.response);
+                    setIsMayorPermitUpload(true);
+                }
+            } else if (info.file.status === "error") {
+                message.error("Mayor's permit upload failed.");
+            }
+        },
+
+        onRemove(info) {
+            // Prevent removal if business exists
+            if (business) {
+                message.error("You cannot remove the business's permit.");
+                return false; // Prevent file removal
+            }
+
+            removeMayorPermit(info.response);
+            return true;
+        },
+    };
+
+    // For BusinessPermit
+
+    const [tempBusinessPermit, setTempBusinessPermit] = useState("");
+    const [isBusinessPermitUpload, setIsBusinessPermitUpload] = useState(false);
+
+    const removeBusinessPermit = (filename) => {
+        axios
+            .post(`/entrepreneur/business-permit-temp-remove/${filename}`)
+            .then((res) => {
+                if (res.data.status === "remove") {
+                    message.success("Business permit removed.");
+                    setIsBusinessPermitUpload(false);
+                }
+                if (res.data.status === "error") {
+                    alert("error");
+                }
+            });
+    };
+
+    const UploadBusinessPermitProps = {
+        name: "business_permit",
+        action: "/entrepreneur/business-permit-temp-upload",
+        headers: {
+            "X-CSRF-Token": csrfToken,
+        },
+
+        beforeUpload: (file) => {
+            if (isBusinessPermitUpload) {
+                message.error(
+                    "You cannot upload a new business permit while one is already uploaded."
+                );
+                return Upload.LIST_IGNORE;
+            }
+
+            const isPDF = file.type === "application/pdf";
+
+            if (!isPDF) {
+                message.error(`${file.name} is not a PDF file.`);
+            }
+            return isPDF || Upload.LIST_IGNORE;
+        },
+
+        onChange(info) {
+            if (info.file.status === "done") {
+                // Ensure the upload is complete
+                if (business) {
+                    axios
+                        .post(
+                            `/entrepreneur/business-permit-image-replace/${business.id}/${business.mayor_permit}`
+                        )
+                        .then((res) => {
+                            if (res.data.status === "replace") {
+                                message.success("File Replaced");
+                            }
+                        });
+                } else {
+                    message.success("Mayor's permit uploaded successfully.");
+                    setTempBusinessPermit(info.file.response);
+                    setIsBusinessPermitUpload(true);
+                }
+            } else if (info.file.status === "error") {
+                message.error("Business permit upload failed.");
+            }
+        },
+
+        onRemove(info) {
+            // Prevent removal if business exists
+            if (business) {
+                message.error("You cannot remove the business permit.");
+                return false; // Prevent file removal
+            }
+
+            removeBusinessPermit(info.response);
+            return true;
+        },
+    };
+
+    const Uploadprops = {};
 
     return (
         <>
@@ -316,7 +483,11 @@ export default function Create({ auth }) {
                             errors?.mayors_permit ? errors.mayors_permit[0] : ""
                         }
                     >
-                        <Upload listType="picture" multiple {...Uploadprops}>
+                        <Upload
+                            listType="picture"
+                            multiple
+                            {...UploadMayorPermitProps}
+                        >
                             <Button icon={<UploadOutlined />}>
                                 Click to Upload
                             </Button>
@@ -337,7 +508,7 @@ export default function Create({ auth }) {
                                 : ""
                         }
                     >
-                        <Upload listType="picture" multiple {...Uploadprops}>
+                        <Upload listType="picture" multiple {...UploadBusinessPermitProps}>
                             <Button icon={<UploadOutlined />}>
                                 Click to Upload
                             </Button>
