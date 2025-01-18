@@ -312,6 +312,83 @@ export default function Create({ auth }) {
         },
     };
 
+    // For Bir
+
+    const [tempBir, setTempBir] = useState("");
+    const [isBirUpload, setIsBirUpload] = useState(false);
+
+    const removeBir = (filename) => {
+        axios
+            .post(`/entrepreneur/bir-temp-remove/${filename}`)
+            .then((res) => {
+                if (res.data.status === "remove") {
+                    message.success("Business permit removed.");
+                    setIsBirUpload(false);
+                }
+                if (res.data.status === "error") {
+                    alert("error");
+                }
+            });
+    };
+
+    const UploadBirProps = {
+        name: "bir_clearance",
+        action: "/entrepreneur/bir-temp-upload",
+        headers: {
+            "X-CSRF-Token": csrfToken,
+        },
+
+        beforeUpload: (file) => {
+            if (isBirUpload) {
+                message.error(
+                    "You cannot upload a new bir clearance while one is already uploaded."
+                );
+                return Upload.LIST_IGNORE;
+            }
+
+            const isPDF = file.type === "application/pdf";
+
+            if (!isPDF) {
+                message.error(`${file.name} is not a PDF file.`);
+            }
+            return isPDF || Upload.LIST_IGNORE;
+        },
+
+        onChange(info) {
+            if (info.file.status === "done") {
+                // Ensure the upload is complete
+                if (business) {
+                    axios
+                        .post(
+                            `/entrepreneur/bir-image-replace/${business.id}/${business.bir_clearance}`
+                        )
+                        .then((res) => {
+                            if (res.data.status === "replace") {
+                                message.success("File Replaced");
+                            }
+                        });
+                } else {
+                    message.success("Bir clearance uploaded successfully.");
+                    setTempBir(info.file.response);
+                    setIsBirUpload(true);
+                }
+            } else if (info.file.status === "error") {
+                message.error("Bir clearance upload failed.");
+            }
+        },
+
+        onRemove(info) {
+            // Prevent removal if business exists
+            if (business) {
+                message.error("You cannot remove the Bir clearance.");
+                return false; // Prevent file removal
+            }
+
+            removeBir(info.response);
+            return true;
+        },
+    };
+
     const Uploadprops = {};
 
     return (
@@ -483,11 +560,7 @@ export default function Create({ auth }) {
                             errors?.mayors_permit ? errors.mayors_permit[0] : ""
                         }
                     >
-                        <Upload
-                            listType="picture"
-                            multiple
-                            {...UploadMayorPermitProps}
-                        >
+                        <Upload listType="picture" {...UploadMayorPermitProps}>
                             <Button icon={<UploadOutlined />}>
                                 Click to Upload
                             </Button>
@@ -508,7 +581,10 @@ export default function Create({ auth }) {
                                 : ""
                         }
                     >
-                        <Upload listType="picture" multiple {...UploadBusinessPermitProps}>
+                        <Upload
+                            listType="picture"
+                            {...UploadBusinessPermitProps}
+                        >
                             <Button icon={<UploadOutlined />}>
                                 Click to Upload
                             </Button>
@@ -527,7 +603,7 @@ export default function Create({ auth }) {
                             errors?.bir_clearance ? errors.bir_clearance[0] : ""
                         }
                     >
-                        <Upload listType="picture" multiple {...Uploadprops}>
+                        <Upload listType="picture" {...UploadBirProps}>
                             <Button icon={<UploadOutlined />}>
                                 Click to Upload
                             </Button>

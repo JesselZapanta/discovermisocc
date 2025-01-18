@@ -92,6 +92,11 @@ Route::middleware(['auth', 'entrepreneur'])->group(function () {
     Route::post('/entrepreneur/business-permit-temp-remove/{filename}', [EntrepreneurBusinessController::class, 'removeBusinessPermitUpload']);
     Route::post('/entrepreneur/business-permit-image-replace/{id}/{filename}', [EntrepreneurBusinessController::class, 'replaceBusinessPermitUpload']);
     
+    //bir
+    Route::post('/entrepreneur/bir-temp-upload', [EntrepreneurBusinessController::class, 'birTempUpload']);
+    Route::post('/entrepreneur/bir-temp-remove/{filename}', [EntrepreneurBusinessController::class, 'removeBirUpload']);
+    Route::post('/entrepreneur/bir-image-replace/{id}/{filename}', [EntrepreneurBusinessController::class, 'replaceBirUpload']);
+    
     Route::post('/entrepreneur/business/store', [EntrepreneurBusinessController::class, 'store']);
 });
 

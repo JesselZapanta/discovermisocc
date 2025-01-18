@@ -179,6 +179,58 @@ class EntrepreneurBusinessController extends Controller
         ], 200);
     }
 
+    //bir
+
+    public function birTempUpload(Request $request){
+        $request->validate([
+            'bir_clearance' => ['mimes:pdf']
+        ]);
+        
+        $file = $request->bir_clearance;
+        $fileGenerated = md5($file->getClientOriginalName() . time());
+        $imageName = $fileGenerated . '.' . $file->getClientOriginalExtension();
+        $imagePath = $file->storeAs('temp', $imageName, 'public');
+        $name = explode('/', $imagePath);
+        return $name[1];
+    }
+
+    public function removeBirUpload($fileName){
+
+        // return $fileName;
+        if (Storage::disk('public')->exists('temp/' . $fileName)) {
+            Storage::disk('public')->delete('temp/' . $fileName);
+
+            return response()->json([
+                'status' => 'remove'
+            ], 200);
+        }
+    }
+
+    public function replaceBirUpload($id, $fileName){
+        $data = Business::find($id);
+        $oldBirClearance = $data->bir_clearance;
+
+        // return $oldBirClearance;
+        $data->bir_clearance = null;
+        $data->save();
+
+        if (Storage::disk('public')->exists('bir_clearance/' . $oldBirClearance)) {
+            Storage::disk('public')->delete('bir_clearance/' . $oldBirClearance);
+
+            if (Storage::disk('public')->exists('temp/' . $fileName)) {
+                Storage::disk('public')->delete('temp/' . $fileName);
+            }
+
+            return response()->json([
+                'status' => 'replace'
+            ], 200);
+        }
+
+        return response()->json([
+            'status' => 'error'
+        ], 200);
+    }
+
 
 
     public function store(Request $request)
