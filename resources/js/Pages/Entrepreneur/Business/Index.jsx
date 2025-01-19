@@ -56,7 +56,9 @@ export default function Index({ auth }) {
         ].join("&");
 
         try {
-            const res = await axios.get(`/admin/user/getdata?${params}`);
+            const res = await axios.get(
+                `/entrepreneur/business/getdata?${params}`
+            );
             setData(res.data.data);
             setTotal(res.data.total);
         } catch (err){
@@ -165,7 +167,7 @@ export default function Index({ auth }) {
                         dataIndex="name"
                         key="name"
                     />
-
+{/* 
                     <Column
                         sorter={true}
                         title="Status"
@@ -192,7 +194,7 @@ export default function Index({ auth }) {
                                 <Tag color="purple">International</Tag>
                             )
                         }
-                    />
+                    /> */}
 
                     <Column
                         title="Action"

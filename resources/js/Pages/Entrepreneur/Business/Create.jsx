@@ -53,15 +53,14 @@ export default function Create({ auth }) {
             }
         } catch (error) {
             // Handle validation errors or other server errors
-            if (error.response?.data?.errors) {
-                setErrors(error.response.data.errors);
-            } else {
-                notification.error({
-                    message: "Error",
-                    description: "An unexpected error occurred.",
-                    placement: "bottomRight",
-                });
-            }
+            setErrors(err.response.data.errors);
+            // else {
+            //     notification.error({
+            //         message: "Error",
+            //         description: "An unexpected error occurred.",
+            //         placement: "bottomRight",
+            //     });
+            // }
         } finally {
             setProcessing(false); // Stop processing
         }
@@ -165,7 +164,7 @@ export default function Create({ auth }) {
 
     const removeMayorPermit = (filename) => {
         axios
-            .post(`/entrepreneur/business-permit-temp-remove/${filename}`)
+            .post(`/entrepreneur/mayor-permit-temp-remove/${filename}`)
             .then((res) => {
                 if (res.data.status === "remove") {
                     message.success("Mayor's permit removed.");
@@ -179,7 +178,7 @@ export default function Create({ auth }) {
 
     const UploadMayorPermitProps = {
         name: "mayor_permit",
-        action: "/entrepreneur/business-permit-temp-upload",
+        action: "/entrepreneur/mayor-permit-temp-upload",
         headers: {
             "X-CSRF-Token": csrfToken,
         },
@@ -187,7 +186,7 @@ export default function Create({ auth }) {
         beforeUpload: (file) => {
             if (isMayorPermitUpload) {
                 message.error(
-                    "You cannot upload a new business's permit while one is already uploaded."
+                    "You cannot upload a new mayor's permit while one is already uploaded."
                 );
                 return Upload.LIST_IGNORE;
             }
@@ -206,7 +205,7 @@ export default function Create({ auth }) {
                 if (business) {
                     axios
                         .post(
-                            `/entrepreneur/business-permit-image-replace/${business.id}/${business.mayor_permit}`
+                            `/entrepreneur/mayor-permit-image-replace/${business.id}/${business.mayor_permit}`
                         )
                         .then((res) => {
                             if (res.data.status === "replace") {
@@ -226,7 +225,7 @@ export default function Create({ auth }) {
         onRemove(info) {
             // Prevent removal if business exists
             if (business) {
-                message.error("You cannot remove the business's permit.");
+                message.error("You cannot remove the mayor's permit.");
                 return false; // Prevent file removal
             }
 
@@ -291,7 +290,7 @@ export default function Create({ auth }) {
                             }
                         });
                 } else {
-                    message.success("Mayor's permit uploaded successfully.");
+                    message.success("Business's permit uploaded successfully.");
                     setTempBusinessPermit(info.file.response);
                     setIsBusinessPermitUpload(true);
                 }
@@ -549,15 +548,15 @@ export default function Create({ auth }) {
                     </Form.Item>
                     <Form.Item
                         label="MAYOR'S PERMIT"
-                        name="mayors_permit"
+                        name="mayor_permit"
                         valuePropName="fileList"
                         className="w-full"
                         getValueFromEvent={(e) =>
                             Array.isArray(e) ? e : e?.fileList
                         }
-                        validateStatus={errors?.mayors_permit ? "error" : ""}
+                        validateStatus={errors?.mayor_permit ? "error" : ""}
                         help={
-                            errors?.mayors_permit ? errors.mayors_permit[0] : ""
+                            errors?.mayor_permit ? errors.mayor_permit[0] : ""
                         }
                     >
                         <Upload listType="picture" {...UploadMayorPermitProps}>

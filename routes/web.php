@@ -75,6 +75,7 @@ Route::middleware(['auth', 'entrepreneur'])->group(function () {
     Route::get('/entrepreneur/dashboard', [EntrepreneurDashboardController::class, 'index'])->name('entrepreneur.dashboard');
 
     Route::get('/entrepreneur/business', [EntrepreneurBusinessController::class, 'index'])->name('entrepreneur.business');
+    Route::get('/entrepreneur/business/getdata', [EntrepreneurBusinessController::class, 'getdata']);
     Route::get('/entrepreneur/business/create', [EntrepreneurBusinessController::class, 'create'])->name('entrepreneur.business-create');
 
     //logo
@@ -82,7 +83,7 @@ Route::middleware(['auth', 'entrepreneur'])->group(function () {
     Route::post('/entrepreneur/logo-temp-remove/{filename}', [EntrepreneurBusinessController::class, 'removeLogoUpload']);
     Route::post('/entrepreneur/logo-image-replace/{id}/{filename}', [EntrepreneurBusinessController::class, 'replaceLogoUpload']);
 
-    //logo
+    //mayor
     Route::post('/entrepreneur/mayor-permit-temp-upload', [EntrepreneurBusinessController::class, 'mayorPermitTempUpload']);
     Route::post('/entrepreneur/mayor-permit-temp-remove/{filename}', [EntrepreneurBusinessController::class, 'removeMayorPermitUpload']);
     Route::post('/entrepreneur/mayor-permit-image-replace/{id}/{filename}', [EntrepreneurBusinessController::class, 'replaceMayorPermitUpload']);

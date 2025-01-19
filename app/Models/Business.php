@@ -8,6 +8,7 @@ class Business extends Model
 {
     protected $table = 'businesses';
     protected $fillable = [
+        'user_id',
         'name',
         'email',
         'contact',
