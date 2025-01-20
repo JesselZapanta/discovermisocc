@@ -1,5 +1,5 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, Link, usePage } from "@inertiajs/react";
+import { Head, Link, router, usePage } from "@inertiajs/react";
 import {
     Avatar,
     Button,
@@ -205,7 +205,7 @@ export default function Index({ auth }) {
                                     type="primary"
                                     shape="square"
                                     icon={<EditOutlined />}
-                                    // onClick={() => showEditModal(record)}
+                                    onClick={() => router.get(route("entrepreneur.business-edit", record.id))}
                                 ></Button>
                                 <Button
                                     danger

@@ -33,6 +33,15 @@ class EntrepreneurBusinessController extends Controller
 
     }
 
+    public function edit ($id)
+    {
+        $business = Business::findOrFail($id);
+        // return $business;
+        return inertia('Entrepreneur/Business/Create', [
+            'business'  => $business,
+        ]);
+    }
+
     //Uplaods
 
     //logo

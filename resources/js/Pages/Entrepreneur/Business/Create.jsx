@@ -24,12 +24,75 @@ import {
     PhoneOutlined,
 } from "@ant-design/icons";
 
-export default function Create({ auth }) {
-    const [business, setBusiness] = useState(null);
+export default function Create({ auth, business }) {
+    // const [business, setBusiness] = useState(null);
+
+    console.log(business);
+
 
     const [form] = Form.useForm();
     const [processing, setProcessing] = useState(false);
     const [errors, setErrors] = useState({});
+
+    if (business) {
+
+        const logo = business.logo
+            ? [
+                {
+                    uid: "-1",
+                    name: business.logo,
+                    url: `/storage/logos/${business.logo}`,
+                },
+            ]
+            : [];
+
+        const mayor_permit = business.mayor_permit
+            ? [
+                {
+                    uid: "-1",
+                    name: business.mayor_permit,
+                    url: `/storage/mayor_permit/${business.mayor_permit}`,
+                },
+            ]
+            : [];
+
+        const business_permit = business.business_permit
+            ? [
+                {
+                    uid: "-1",
+                    name: business.business_permit,
+                    url: `/storage/business_permit/${business.business_permit}`,
+                },
+            ]
+            : [];
+
+        const bir_clearance = business.bir_clearance
+            ? [
+                {
+                    uid: "-1",
+                    name: business.bir_clearance,
+                    url: `/storage/bir_clearance/${business.bir_clearance}`,
+                },
+            ]
+            : [];
+
+        form.setFieldsValue({
+            name: business.name,
+            email: business.email,
+            contact: business.contact,
+            address: business.address,
+            city: business.city,
+            latitude: business.latitude,
+            longitude: business.longitude,
+            description: business.description,
+            logo: logo,
+            mayor_permit: mayor_permit,
+            business_permit: business_permit,
+            bir_clearance: bir_clearance,
+        });
+    } else {
+        form.resetFields();
+    }
 
     const handleSubmit = async (values) => {
         setProcessing(true); // Start processing
@@ -54,17 +117,11 @@ export default function Create({ auth }) {
         } catch (error) {
             // Handle validation errors or other server errors
             setErrors(err.response.data.errors);
-            // else {
-            //     notification.error({
-            //         message: "Error",
-            //         description: "An unexpected error occurred.",
-            //         placement: "bottomRight",
-            //     });
-            // }
         } finally {
             setProcessing(false); // Stop processing
         }
     };
+
     const handleCancel = () => {
         form.resetFields();
 
@@ -390,10 +447,15 @@ export default function Create({ auth }) {
 
     const Uploadprops = {};
 
+
     return (
         <>
             <AuthenticatedLayout page="Register Business" auth={auth}>
                 <Head title="Register Business" />
+
+                <pre className="text-gray-900">
+                    {JSON.stringify(business, null, 2)}
+                </pre>
 
                 <Form
                     form={form}

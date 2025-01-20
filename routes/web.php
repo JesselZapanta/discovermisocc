@@ -77,6 +77,7 @@ Route::middleware(['auth', 'entrepreneur'])->group(function () {
     Route::get('/entrepreneur/business', [EntrepreneurBusinessController::class, 'index'])->name('entrepreneur.business');
     Route::get('/entrepreneur/business/getdata', [EntrepreneurBusinessController::class, 'getdata']);
     Route::get('/entrepreneur/business/create', [EntrepreneurBusinessController::class, 'create'])->name('entrepreneur.business-create');
+    Route::get('/entrepreneur/business/edit/{id}', [EntrepreneurBusinessController::class, 'edit'])->name('entrepreneur.business-edit');
 
     //logo
     Route::post('/entrepreneur/logo-temp-upload', [EntrepreneurBusinessController::class, 'logoTempUpload']);
