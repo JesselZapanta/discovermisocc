@@ -1,5 +1,5 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, usePage } from "@inertiajs/react";
+import { Head, router, usePage } from "@inertiajs/react";
 import { useState } from "react";
 import {
     Button,
@@ -133,6 +133,8 @@ export default function Create({ auth, business }) {
         if (isMayorPermitUpload) {
             removeMayorPermit(tempMayorPermit);
         }
+
+        router.visit(route("entrepreneur.business"));
     };
 
     const { props } = usePage();
