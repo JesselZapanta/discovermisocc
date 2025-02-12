@@ -33,15 +33,6 @@ class EntrepreneurBusinessController extends Controller
 
     }
 
-    public function edit ($id)
-    {
-        $business = Business::findOrFail($id);
-        // return $business;
-        return inertia('Entrepreneur/Business/Create', [
-            'business'  => $business,
-        ]);
-    }
-
     //Uplaods
 
     //logo
@@ -313,6 +304,85 @@ class EntrepreneurBusinessController extends Controller
 
         return response()->json([
             'status' => 'created'
+        ], 200);
+    }
+    
+    public function edit ( $id)
+    {
+        $business = Business::findOrFail($id);
+
+        // return $business;
+        return inertia('Entrepreneur/Business/Create', [
+            'business'  => $business,
+        ]);
+    }
+    public function update(EntrepreneurStoreBusinessRequest $request, $id)
+    {
+        $data = $request->validated();
+        $business = Business::findOrFail($id);
+
+        //logo
+        if(!empty($data['logo']) && isset($request->logo[0]['response'])){
+            $imgFilename = $request->logo[0]['response'];
+            $data['logo'] = $imgFilename;
+
+            if (Storage::disk('public')->exists('temp/' . $imgFilename)) {
+                // Move the file
+                Storage::disk('public')->move('temp/' . $imgFilename, 'logos/' . $imgFilename); 
+                Storage::disk('public')->delete('temp/' . $imgFilename);
+            }
+        } else {
+            unset($data['logo']); 
+        }
+
+        //mayor_permit
+        if(!empty($data['mayor_permit']) && isset($request->mayor_permit[0]['response'])){
+            $imgFilename = $request->mayor_permit[0]['response'];
+            $data['mayor_permit'] = $imgFilename;
+
+            if (Storage::disk('public')->exists('temp/' . $imgFilename)) {
+                // Move the file
+                Storage::disk('public')->move('temp/' . $imgFilename, 'mayor_permit/' . $imgFilename); 
+                Storage::disk('public')->delete('temp/' . $imgFilename);
+            }
+        }  else {
+            unset($data['mayor_permit']); 
+        }
+
+        //business_permit
+        if(!empty($data['business_permit']) && isset($request->business_permit[0]['response'])){
+            $imgFilename = $request->business_permit[0]['response'];
+            $data['business_permit'] = $imgFilename;
+
+            if (Storage::disk('public')->exists('temp/' . $imgFilename)) {
+                // Move the file
+                Storage::disk('public')->move('temp/' . $imgFilename, 'business_permit/' . $imgFilename); 
+                Storage::disk('public')->delete('temp/' . $imgFilename);
+            }
+        } else {
+            unset($data['business_permit']); 
+        }
+
+        //bir_clearance
+        if(!empty($data['bir_clearance']) && isset($request->bir_clearance[0]['response'])){
+            $imgFilename = $request->bir_clearance[0]['response'];
+            $data['bir_clearance'] = $imgFilename;
+
+            if (Storage::disk('public')->exists('temp/' . $imgFilename)) {
+                // Move the file
+                Storage::disk('public')->move('temp/' . $imgFilename, 'bir_clearance/' . $imgFilename); 
+                Storage::disk('public')->delete('temp/' . $imgFilename);
+            }
+        } else {
+            unset($data['bir_clearance']); 
+        }
+
+        // $data['user_id'] = Auth::user()->id;
+
+        $business->update($data);
+
+        return response()->json([
+            'status' => 'updated'
         ], 200);
     }
 }

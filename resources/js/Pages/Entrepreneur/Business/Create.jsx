@@ -98,27 +98,54 @@ export default function Create({ auth, business }) {
         setProcessing(true); // Start processing
         setErrors({}); // Clear previous errors
 
-        try {
-            const response = await axios.post(
-                "/entrepreneur/business/store",
-                values
-            );
+        if(business){
 
-            // Handle success response
-            if (response.data.status === "created") {
-                handleCancel(); // Reset the form
-                notification.success({
-                    message: "Submitted!",
-                    description:
-                        "The business registration has been submitted successfully.",
-                    placement: "bottomRight",
-                });
+            try {
+                const response = await axios.put(
+                    `/entrepreneur/business/update/${business.id}`,
+                    values
+                );
+
+                // Handle success response
+                if (response.data.status === "updated") {
+                    handleCancel(); // Reset the form
+                    notification.success({
+                        message: "Updated!",
+                        description:
+                            "The business registration has been updated successfully.",
+                        placement: "bottomRight",
+                    });
+                }
+            } catch (error) {
+                // Handle validation errors or other server errors
+                setErrors(err.response.data.errors);
+            } finally {
+                setProcessing(false); // Stop processing
             }
-        } catch (error) {
-            // Handle validation errors or other server errors
-            setErrors(err.response.data.errors);
-        } finally {
-            setProcessing(false); // Stop processing
+
+        }else{
+            try {
+                const response = await axios.post(
+                    "/entrepreneur/business/store",
+                    values
+                );
+
+                // Handle success response
+                if (response.data.status === "created") {
+                    handleCancel(); // Reset the form
+                    notification.success({
+                        message: "Submitted!",
+                        description:
+                            "The business registration has been submitted successfully.",
+                        placement: "bottomRight",
+                    });
+                }
+            } catch (error) {
+                // Handle validation errors or other server errors
+                setErrors(err.response.data.errors);
+            } finally {
+                setProcessing(false); // Stop processing
+            }
         }
     };
 
@@ -685,7 +712,7 @@ export default function Create({ auth, business }) {
                                 disabled={processing}
                                 loading={processing}
                             >
-                                Create
+                                {business ? "Update" : "Create"}
                             </Button>
                         </Space>
                     </Row>

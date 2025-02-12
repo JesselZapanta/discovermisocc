@@ -22,7 +22,18 @@ class EntrepreneurUpdateBusinessRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => ['required','string'],
+            'email' => ['required','string'],
+            'contact' => ['required'],
+            'address' => ['required','string'],
+            'city' => ['required'],
+            'latitude' => ['required','string'],
+            'longitude' => ['required','string'],
+            'description' => ['required','string'],
+            'logo' => ['nullable'],
+            'mayor_permit' => ['nullable'],
+            'business_permit' => ['nullable'],
+            'bir_clearance' => ['nullable'],
         ];
     }
 }

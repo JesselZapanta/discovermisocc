@@ -136,6 +136,7 @@ class AdminUserController extends Controller
         } else {
             unset($data['avatar']); // Do not modify the avatar if none is provided
         }
+        
 
         // Handle type-specific fields
         if ($data['type'] === 1) {
