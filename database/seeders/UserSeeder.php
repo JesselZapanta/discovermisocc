@@ -39,6 +39,17 @@ class UserSeeder extends Seeder
                 'avatar' => null,
             ],
             [
+                'name' => 'tourist 2',
+                'email' => 'tourist2@gmail.com',
+                'email_verified_at' => now('Asia/Manila'),
+                'password' => bcrypt('tourist'),
+                'role' => 1,
+                'status' => 1,
+                'country' => 138,
+                'type' => 0,
+                'avatar' => null,
+            ],
+            [
                 'name' => 'facilator 1',
                 'email' => 'facilator1@gmail.com',
                 'email_verified_at' => now('Asia/Manila'),
