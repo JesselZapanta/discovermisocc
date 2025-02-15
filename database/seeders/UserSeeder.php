@@ -13,7 +13,6 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         //0 = admin, 1 = tourist, 2 = facilator, 3 entrepreneur
-        
         $users = [
             [
                 'name' => 'admin',
