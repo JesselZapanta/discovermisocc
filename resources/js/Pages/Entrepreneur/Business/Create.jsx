@@ -47,33 +47,15 @@ export default function Create({ auth, business }) {
             : [];
 
         const mayor_permit = business.mayor_permit
-            ? [
-                {
-                    uid: "-1",
-                    name: business.mayor_permit,
-                    url: `/storage/mayor_permit/${business.mayor_permit}`,
-                },
-            ]
+            ? JSON.parse(business.mayor_permit)
             : [];
 
         const business_permit = business.business_permit
-            ? [
-                {
-                    uid: "-1",
-                    name: business.business_permit,
-                    url: `/storage/business_permit/${business.business_permit}`,
-                },
-            ]
+            ? JSON.parse(business.business_permit)
             : [];
 
         const bir_clearance = business.bir_clearance
-            ? [
-                {
-                    uid: "-1",
-                    name: business.bir_clearance,
-                    url: `/storage/bir_clearance/${business.bir_clearance}`,
-                },
-            ]
+            ? JSON.parse(business.bir_clearance)
             : [];
 
         form.setFieldsValue({
