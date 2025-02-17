@@ -29,6 +29,8 @@ export default function Create({ auth, business }) {
 
     console.log(business);
 
+    //error on create and update
+
 
     const [form] = Form.useForm();
     const [processing, setProcessing] = useState(false);
